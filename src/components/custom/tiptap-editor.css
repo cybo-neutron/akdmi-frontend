@@ -1,0 +1,151 @@
+/* Tiptap Editor Styles */
+
+.tiptap-editor-wrapper {
+  position: relative;
+}
+
+/* Placeholder styling */
+.tiptap-editor-content .is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted-foreground, hsl(0 0% 45%));
+  pointer-events: none;
+  height: 0;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* Editor content area */
+.tiptap-editor-content {
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.tiptap-editor-content:focus {
+  outline: none;
+}
+
+/* Prose overrides for the editor */
+.tiptap-editor-content h1 {
+  font-size: 1.75em;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.tiptap-editor-content h2 {
+  font-size: 1.4em;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 0.9em;
+  margin-bottom: 0.4em;
+}
+
+.tiptap-editor-content h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+}
+
+.tiptap-editor-content p {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  line-height: 1.7;
+}
+
+.tiptap-editor-content ul,
+.tiptap-editor-content ol {
+  padding-left: 1.5em;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.tiptap-editor-content ul {
+  list-style-type: disc;
+}
+
+.tiptap-editor-content ol {
+  list-style-type: decimal;
+}
+
+.tiptap-editor-content li {
+  margin-top: 0.15em;
+  margin-bottom: 0.15em;
+}
+
+.tiptap-editor-content li p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tiptap-editor-content blockquote {
+  border-left: 3px solid var(--border, hsl(0 0% 85%));
+  padding-left: 1em;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+  color: var(--muted-foreground, hsl(0 0% 45%));
+  font-style: italic;
+}
+
+.tiptap-editor-content pre {
+  background-color: var(--muted, hsl(0 0% 96%));
+  border-radius: 0.375rem;
+  padding: 0.75em 1em;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+  overflow-x: auto;
+  font-family:
+    "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.875em;
+}
+
+.tiptap-editor-content code {
+  background-color: var(--muted, hsl(0 0% 96%));
+  border-radius: 0.25rem;
+  padding: 0.15em 0.35em;
+  font-size: 0.875em;
+  font-family:
+    "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.tiptap-editor-content pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 1em;
+}
+
+.tiptap-editor-content hr {
+  border: none;
+  border-top: 1px solid var(--border, hsl(0 0% 85%));
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.tiptap-editor-content strong {
+  font-weight: 700;
+}
+
+.tiptap-editor-content em {
+  font-style: italic;
+}
+
+.tiptap-editor-content u {
+  text-decoration: underline;
+}
+
+.tiptap-editor-content s {
+  text-decoration: line-through;
+}
+
+/* Toolbar */
+.tiptap-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
