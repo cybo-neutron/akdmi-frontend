@@ -101,7 +101,7 @@ export function CourseCard({
             variant="outline"
             size="sm"
             className="w-full"
-            onClick={() => navigate(`/dashboard/course/${course.id}`)}
+            onClick={() => navigate(`/dashboard/courses/${course.id}`)}
           >
             View Course
           </Button>

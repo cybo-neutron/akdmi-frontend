@@ -191,7 +191,7 @@ function ChapterSidebar({
   );
 }
 
-export default function CourseDetail() {
+export default function ContentView() {
   const { id: courseId } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();

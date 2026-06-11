@@ -88,7 +88,7 @@ export function CourseList({
   }
 
   return (
-    <div className="grid gap-4 grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-6">
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-3 3xl:grid-cols-5 mt-6">
       {courses.map((course) => (
         <CourseCard
           key={course.id}

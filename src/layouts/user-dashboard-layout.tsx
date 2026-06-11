@@ -107,7 +107,7 @@ const data = {
 };
 
 export default function UserDashboardLayout() {
-  const { userDetails, isUserLoggedIn } = useAuthStore();
+  const { userDetails, isUserLoggedIn, logOut } = useAuthStore();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -306,7 +306,7 @@ export default function UserDashboardLayout() {
                   ),
                 },
                 {
-                  onClickAction: () => console.log("Logout"),
+                  onClickAction: () => logOut(),
                   Component: (
                     <div className="flex items-center gap-2 text-destructive group/item">
                       <LogOut className="size-4 opacity-70 group-hover/item:opacity-100" />

@@ -1,0 +1,197 @@
+import { useParams, useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getCourseById } from "@/services/course.service";
+import { getContentsByCourse, type Content } from "@/services/content.service";
+import { CourseHero } from "@/components/course/CourseHero";
+import {
+  CourseCurriculum,
+  type Chapter,
+} from "@/components/course/CourseCurriculum";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import {
+  User,
+  Clock,
+  BarChart2,
+  LayoutList,
+  BookOpen,
+} from "lucide-react";
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function organizeContent(contents: Content[]): Chapter[] {
+  const chapters: Chapter[] = [];
+
+  contents.forEach((content) => {
+    if (!content.parentId) {
+      chapters.push({ ...content, topics: [] });
+    }
+  });
+
+  contents.forEach((content) => {
+    if (content.parentId) {
+      const chapter = chapters.find((c) => c.id === content.parentId);
+      if (chapter) chapter.topics.push(content);
+    }
+  });
+
+  chapters.sort((a, b) => a.sequence - b.sequence);
+  chapters.forEach((chapter) => {
+    chapter.topics.sort((a, b) => a.sequence - b.sequence);
+  });
+
+  return chapters;
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function CourseDetailsSkeleton() {
+  return (
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <Skeleton className="h-10 w-4/5" />
+      <div className="flex gap-2">
+        <Skeleton className="h-6 w-24 rounded-sm" />
+        <Skeleton className="h-6 w-24 rounded-sm" />
+        <Skeleton className="h-6 w-24 rounded-sm" />
+      </div>
+      <Skeleton className="aspect-video w-full rounded-sm" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-5/6" />
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-40 w-full rounded-md" />
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function CourseDetails() {
+  const { id: courseId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const { data: courseData, isLoading: courseLoading } = useQuery({
+    queryKey: ["course", courseId],
+    queryFn: () => getCourseById(courseId!),
+    enabled: !!courseId,
+  });
+
+  const { data: contentsData, isLoading: contentsLoading } = useQuery({
+    queryKey: ["contents", courseId],
+    queryFn: () => getContentsByCourse(courseId!),
+    enabled: !!courseId,
+  });
+
+  if (courseLoading || contentsLoading) {
+    return <CourseDetailsSkeleton />;
+  }
+
+  const course = courseData?.data ?? courseData;
+  const contents: Content[] = contentsData?.data ?? contentsData ?? [];
+  const chapters = organizeContent(contents);
+  const totalLessons = chapters.reduce((acc, ch) => acc + ch.topics.length, 0);
+
+  if (!course) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
+        <h2 className="text-xl font-semibold">Course not found</h2>
+        <p className="text-muted-foreground text-sm mt-2">
+          The course you're looking for doesn't exist or has been removed.
+        </p>
+        <Button className="mt-6" onClick={() => navigate("/dashboard/courses")}>
+          Browse Courses
+        </Button>
+      </div>
+    );
+  }
+
+  const handleStartLearning = () => {
+    const firstTopic = chapters[0]?.topics[0];
+    if (firstTopic) {
+      navigate(`/dashboard/courses/${courseId}?contentId=${firstTopic.id}`);
+    }
+  };
+
+  const handleTopicSelect = (topic: Content) => {
+    navigate(`/dashboard/courses/${courseId}?contentId=${topic.id}`);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      {/* ── Title & Meta badges ── */}
+      <div className="space-y-4">
+        <h1 className="text-3xl font-black uppercase tracking-tight leading-tight">
+          {course.title}
+        </h1>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <MetaBadge icon={<User className="h-3.5 w-3.5" />} label="Instructor" />
+          <MetaBadge
+            icon={<Clock className="h-3.5 w-3.5" />}
+            label={`${totalLessons} ${totalLessons === 1 ? "Lesson" : "Lessons"}`}
+          />
+          <MetaBadge
+            icon={<BarChart2 className="h-3.5 w-3.5" />}
+            label={course.level ?? "All Levels"}
+          />
+        </div>
+      </div>
+
+      {/* ── Hero ── */}
+      <CourseHero
+        introductionVideo={course.introductionVideo}
+        coverArt={course.coverArt}
+        title={course.title}
+      />
+
+      {/* ── Start Learning CTA ── */}
+      {totalLessons > 0 && (
+        <Button size="lg" className="w-full" onClick={handleStartLearning}>
+          Start Learning
+        </Button>
+      )}
+
+      {/* ── Overview ── */}
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-sm font-black uppercase tracking-widest">
+            Overview
+          </h2>
+          <Separator className="mt-1.5" />
+        </div>
+        <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">
+          {course.description}
+        </p>
+      </section>
+
+      {/* ── Curriculum ── */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <LayoutList className="h-4 w-4" />
+          <h2 className="text-sm font-black uppercase tracking-widest">
+            Curriculum
+          </h2>
+        </div>
+        <CourseCurriculum chapters={chapters} onSelectTopic={handleTopicSelect} />
+      </section>
+    </div>
+  );
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function MetaBadge({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 bg-muted rounded-sm uppercase tracking-wide">
+      {icon}
+      {label}
+    </span>
+  );
+}

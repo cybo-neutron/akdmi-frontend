@@ -47,3 +47,20 @@ export async function deleteCourse(courseId: string) {
   return data;
 }
 
+export async function getCourseMediaPresignedUrl({
+  fileName,
+  contentType,
+  category,
+}: {
+  fileName: string;
+  contentType: string;
+  category: "cover_art" | "introduction_video";
+}): Promise<{ signedUrl: string; objectKey: string; bucketName: string }> {
+  const { data } = await axiosInterceptor.request({
+    method: "post",
+    url: `/v1/courses/media/presigned-url`,
+    data: { fileName, contentType, category },
+  });
+  return data;
+}
+
