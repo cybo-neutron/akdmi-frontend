@@ -88,11 +88,15 @@ export function ContentViewer({ contentId }: ContentViewerProps) {
     return (
       <div className="prose dark:prose-invert max-w-none">
         {content.description && (
-          <div
-            className="text-xl text-muted-foreground leading-relaxed mb-10 italic"
-            dangerouslySetInnerHTML={{ __html: content.description }}
-          />
+          <div className="flex border-0 border-l-4 border-primary/20 p-2 mb-4">
+            <div
+              className="text-sm text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: content.description }}
+            />
+
+          </div>
         )}
+
         {textData?.content ? (
           <div
             className="rich-text-content"
@@ -142,11 +146,6 @@ export function ContentViewer({ contentId }: ContentViewerProps) {
         )}
         <div className="group relative overflow-hidden   ">
           {mediaData.type === "video" && (
-            // <video
-            //   src={mediaData.url}
-            //   controls
-            //   className="w-full aspect-video max-h-[650px] object-contain"
-            // />
             <div className="w-full aspect-video max-h-[600px]">
               <VideoJSComponent
                 options={{
