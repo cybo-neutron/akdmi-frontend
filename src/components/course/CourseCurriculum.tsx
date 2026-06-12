@@ -26,6 +26,7 @@ import {
   Video,
   FileIcon,
   GripVertical,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Content } from "@/services/content.service";
@@ -48,6 +49,8 @@ interface CourseCurriculumProps {
   onReorderChapters?: (newOrder: Chapter[]) => void;
   /** Called with the chapter id and the new topic order after a topic reorder. */
   onReorderTopics?: (chapterId: number, newTopics: Content[]) => void;
+  /** Called when the user clicks 'Add topic' inside a chapter row. */
+  onAddTopic?: (chapterId: number) => void;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -148,6 +151,7 @@ interface SortableChapterRowProps {
   onToggle: () => void;
   onSelectTopic?: (topic: Content) => void;
   onReorderTopics?: (newTopics: Content[]) => void;
+  onAddTopic?: (chapterId: number) => void;
 }
 
 function SortableChapterRow({
@@ -158,6 +162,7 @@ function SortableChapterRow({
   onToggle,
   onSelectTopic,
   onReorderTopics,
+  onAddTopic,
 }: SortableChapterRowProps) {
   // ── Chapter sortable (outer DndContext) ──
   const {
@@ -306,6 +311,16 @@ function SortableChapterRow({
               </button>
             ))
           )}
+          {/* Add topic button (editors only) */}
+          {canEdit && onAddTopic && (
+            <button
+              onClick={() => onAddTopic(chapter.id)}
+              className="w-full flex items-center gap-2 px-6 py-2.5 text-sm text-muted-foreground hover:bg-muted/50 transition-colors border-t"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add topic
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -319,6 +334,7 @@ export function CourseCurriculum({
   onSelectTopic,
   onReorderChapters,
   onReorderTopics,
+  onAddTopic,
 }: CourseCurriculumProps) {
   // ── Permission check ──
   const userDetails = useAuthStore((s) => s.userDetails);
@@ -442,6 +458,7 @@ export function CourseCurriculum({
             onReorderTopics={(newTopics) =>
               handleTopicReorder(chapter.id, newTopics)
             }
+            onAddTopic={onAddTopic}
           />
         ))}
       </div>

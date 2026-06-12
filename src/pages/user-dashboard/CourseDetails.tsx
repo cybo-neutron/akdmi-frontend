@@ -24,7 +24,16 @@ import {
   MoveRight,
   Loader2,
   CheckCircle2,
+  Plus,
 } from "lucide-react";
+import { useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { usePermissionStore } from "@/store/usePermissionStore";
+import { Resource } from "@/types/resource.types";
+import { Action } from "@/types/permission.type";
+import { ContentDialog } from "@/components/content/ContentDialog";
+import { ContentTypeDialog } from "@/components/content/ContentTypeDialog";
+import type { UserRoleType } from "@/types/auth.types";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -78,6 +87,36 @@ export default function CourseDetails() {
   const { id: courseId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [chapterDialogOpen, setChapterDialogOpen] = useState(false);
+  const [topicDialogOpen, setTopicDialogOpen] = useState(false);
+  const [parentChapterId, setParentChapterId] = useState<number | null>(null);
+
+  // Type-specific dialog (Dialog 2)
+  const [typeDialogOpen, setTypeDialogOpen] = useState(false);
+  const [typeDialogContent, setTypeDialogContent] = useState<Content | null>(null);
+
+  const handleAddTopic = (chapterId: number) => {
+    setParentChapterId(chapterId);
+    setTopicDialogOpen(true);
+  };
+
+  const handleTopicCreated = (newContent: Content) => {
+    setTypeDialogContent(newContent);
+    setTypeDialogOpen(true);
+  };
+
+  // ── Permission check ──
+  const userDetails = useAuthStore((s) => s.userDetails);
+  const hasPermission = usePermissionStore((s) => s.hasPermission);
+
+  const canEdit =
+    !!userDetails?.role &&
+    hasPermission(
+      userDetails.role as UserRoleType,
+      Resource.COURSE,
+      Action.update,
+    );
 
   // ── Data queries ──
   const { data: courseData, isLoading: courseLoading } = useQuery({
@@ -159,9 +198,6 @@ export default function CourseDetails() {
     if (isEnrolled) {
       // Already enrolled — jump straight to first topic
       const firstChapter = chapters[0];
-      console.log({
-        chapters
-      })
       if (firstChapter) {
         navigate(`/dashboard/courses/${courseId}/${firstChapter.id}`);
       }
@@ -219,11 +255,11 @@ export default function CourseDetails() {
             </>
           ) : isEnrolled ? (
             <>
-              Continue Learning <MoveRight className="ml-2 h-4 w-4" />
+              Continue Learning <MoveRight />
             </>
           ) : (
             <>
-              ENROLL NOW <MoveRight className="ml-2 h-4 w-4" />
+              ENROLL NOW <MoveRight />
             </>
           )}
         </Button>
@@ -244,14 +280,55 @@ export default function CourseDetails() {
 
       {/* ── Curriculum ── */}
       <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <LayoutList className="h-4 w-4" />
-          <h2 className="text-sm font-black uppercase tracking-widest">
-            Curriculum
-          </h2>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <LayoutList className="h-4 w-4" />
+            <h2 className="text-sm font-black uppercase tracking-widest">
+              Curriculum
+            </h2>
+          </div>
+          {canEdit && (
+            <Button onClick={() => setChapterDialogOpen(true)}>
+              <Plus /> Add chapter
+            </Button>
+          )}
         </div>
-        <CourseCurriculum chapters={chapters} onSelectTopic={handleTopicSelect} />
+        <CourseCurriculum
+          chapters={chapters}
+          onSelectTopic={handleTopicSelect}
+          onAddTopic={canEdit ? handleAddTopic : undefined}
+        />
       </section>
+
+      {/* Add Chapter Dialog */}
+      <ContentDialog
+        mode="create"
+        courseId={Number(courseId)}
+        isChapter={true}
+        open={chapterDialogOpen}
+        onOpenChange={setChapterDialogOpen}
+      />
+
+      {/* Add Topic Dialog (Step 1) */}
+      <ContentDialog
+        mode="create"
+        courseId={Number(courseId)}
+        parentId={parentChapterId}
+        isChapter={false}
+        open={topicDialogOpen}
+        onOpenChange={setTopicDialogOpen}
+        onContentCreated={handleTopicCreated}
+      />
+
+      {/* Add Topic Content Dialog (Step 2) */}
+      {typeDialogContent && (
+        <ContentTypeDialog
+          content={typeDialogContent}
+          courseId={Number(courseId)}
+          open={typeDialogOpen}
+          onOpenChange={setTypeDialogOpen}
+        />
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import {
   getContentsByCourse,
   deleteContent,
   type Content,
+  type Chapter
 } from "@/services/content.service";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,10 +39,12 @@ import { ContentTypeDialog } from "@/components/content/ContentTypeDialog";
 import { cn } from "@/lib/utils";
 import { ContentViewer } from "@/components/content/ContentViewer";
 import { Separator } from "@/components/ui/separator";
+import { ChapterSidebar } from "@/components/course/ChapterSideBar";
+import { useAuthStore } from "@/store/useAuthStore";
+import { usePermissionStore } from "@/store/usePermissionStore";
+import { Resource } from "@/types/resource.types";
+import { Action } from "@/types/permission.type";
 
-interface Chapter extends Content {
-  topics: Content[];
-}
 
 function organizeContent(contents: Content[]): Chapter[] {
   const chapters: Chapter[] = [];
@@ -87,110 +90,6 @@ function getContentIcon(type: string) {
   }
 }
 
-// Chapter List Sidebar Component
-function ChapterSidebar({
-  chapters,
-  currentContentId,
-  onSelectContent,
-  onAddChapter,
-  onAddTopic,
-  isOpen,
-  onClose,
-}: {
-  chapters: Chapter[];
-  currentContentId: number | null;
-  onSelectContent: (content: Content) => void;
-  onAddChapter: () => void;
-  onAddTopic: (chapterId: number) => void;
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  const [expandedChapters, setExpandedChapters] = useState<Set<number>>(
-    new Set(chapters.map((c) => c.id)),
-  );
-
-  const toggleChapter = (chapterId: number) => {
-    setExpandedChapters((prev) => {
-      const next = new Set(prev);
-      if (next.has(chapterId)) {
-        next.delete(chapterId);
-      } else {
-        next.add(chapterId);
-      }
-      return next;
-    });
-  };
-
-  return (
-    <div
-      className={cn(
-        "fixed right-0 top-0 h-full w-80 bg-background border-l z-50 transform transition-transform duration-300 ease-in-out",
-        isOpen ? "translate-x-0" : "translate-x-full",
-      )}
-    >
-      <div className="flex items-center justify-between p-4 border-b">
-        <h3 className="font-semibold">Chapter List</h3>
-        <div className="flex items-center gap-2">
-          <Button size="sm" onClick={onAddChapter}>
-            <Plus className="h-4 w-4 mr-1" />
-            Add Chapter
-          </Button>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-      <div className="overflow-y-auto h-[calc(100%-60px)] p-4 space-y-2">
-        {chapters.map((chapter) => (
-          <div key={chapter.id} className="border rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleChapter(chapter.id)}
-              className="w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors text-left"
-            >
-              <span className="font-medium text-sm">{chapter.title}</span>
-              {expandedChapters.has(chapter.id) ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </button>
-            {expandedChapters.has(chapter.id) && (
-              <div className="border-t">
-                {chapter.topics.map((topic) => (
-                  <button
-                    key={topic.id}
-                    onClick={() => onSelectContent(topic)}
-                    className={cn(
-                      "w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted/50 transition-colors text-left",
-                      currentContentId === topic.id &&
-                      "bg-primary/10 text-primary",
-                    )}
-                  >
-                    {getContentIcon(topic.type)}
-                    <span className="truncate">- {topic.title}</span>
-                  </button>
-                ))}
-                <button
-                  onClick={() => onAddTopic(chapter.id)}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:bg-muted/50 transition-colors border-t"
-                >
-                  <Plus className="h-3 w-3" />
-                  Add topic
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-        {chapters.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No chapters yet</p>
-            <p className="text-sm">Click "Add Chapter" to get started</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 // ─── Chapter Overview ─────────────────────────────────────────────────────────
 
@@ -271,6 +170,18 @@ export default function ContentView() {
   const { id: courseId, contentId } = useParams<{ id: string; contentId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // ── Permission check ──
+  const userDetails = useAuthStore((s) => s.userDetails);
+  const hasPermission = usePermissionStore((s) => s.hasPermission);
+
+  const canEdit =
+    !!userDetails?.role &&
+    hasPermission(
+      userDetails.role as Parameters<typeof hasPermission>[0],
+      Resource.COURSE,
+      Action.update,
+    );
 
   // Remove stale comment
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -362,6 +273,10 @@ export default function ContentView() {
   const handleAddTopic = (chapterId: number) => {
     setParentChapterId(chapterId);
     setTopicDialogOpen(true);
+  };
+
+  const handleChapterCreated = (newChapter: Content) => {
+    navigate(`/dashboard/courses/${courseId}/${newChapter.id}`);
   };
 
   const handleEditContent = () => {
@@ -473,16 +388,18 @@ export default function ContentView() {
         </div>
 
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleEditContent}
-            disabled={!currentContent}
-            title="Edit details"
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          {currentContent && currentContent.parentId && (
+          {canEdit && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleEditContent}
+              disabled={!currentContent}
+              title="Edit details"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
+          {canEdit && currentContent && currentContent.parentId && (
             <Button
               variant="outline"
               size="icon"
@@ -492,15 +409,17 @@ export default function ContentView() {
               <FileText className="h-4 w-4" />
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleDeleteContent}
-            disabled={!currentContent}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          {canEdit && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleDeleteContent}
+              disabled={!currentContent}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -509,8 +428,8 @@ export default function ContentView() {
         chapters={chapters}
         currentContentId={contentId ? Number(contentId) : null}
         onSelectContent={handleSelectContent}
-        onAddChapter={handleAddChapter}
-        onAddTopic={handleAddTopic}
+        onAddChapter={canEdit ? handleAddChapter : undefined}
+        onAddTopic={canEdit ? handleAddTopic : undefined}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
@@ -530,6 +449,7 @@ export default function ContentView() {
         isChapter={true}
         open={chapterDialogOpen}
         onOpenChange={setChapterDialogOpen}
+        onContentCreated={handleChapterCreated}
       />
 
       {/* Add Topic Dialog (Step 1) */}

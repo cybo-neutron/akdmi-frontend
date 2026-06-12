@@ -54,7 +54,7 @@ const UserDashboardHome = () => {
               {enrollments.map((item) => (
                 <Link
                   key={item.enrollment.id}
-                  to={`/dashboard/course/${item.course.id}`}
+                  to={`/dashboard/courses/${item.course.id}`}
                   className="group relative"
                 >
                   <div className="aspect-square rounded-lg border border-border/50 bg-muted/30 flex flex-col items-center justify-center gap-3 p-4 transition-all group-hover:border-primary/50 group-hover:bg-primary/5 group-hover:scale-105 group-hover:shadow-lg active:scale-95">

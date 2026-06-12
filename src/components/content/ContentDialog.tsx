@@ -90,8 +90,8 @@ export function ContentDialog({
       reset();
       onOpenChange(false);
 
-      // If not a chapter and callback exists, open the type-specific dialog
-      if (!isChapter && onContentCreated) {
+      // If callback exists, trigger it (so callers can respond to creation events, e.g. select/navigate)
+      if (onContentCreated) {
         onContentCreated(data);
       }
     },

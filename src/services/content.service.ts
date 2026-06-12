@@ -45,6 +45,10 @@ export interface Content {
   typeData?: ContentTypeData;
 }
 
+export interface Chapter extends Content {
+  topics: Content[];
+}
+
 export interface CreateContentData {
   title: string;
   description: string;
