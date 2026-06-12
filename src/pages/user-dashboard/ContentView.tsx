@@ -162,7 +162,7 @@ function ChapterSidebar({
                     className={cn(
                       "w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted/50 transition-colors text-left",
                       currentContentId === topic.id &&
-                        "bg-primary/10 text-primary",
+                      "bg-primary/10 text-primary",
                     )}
                   >
                     {getContentIcon(topic.type)}
@@ -192,11 +192,11 @@ function ChapterSidebar({
 }
 
 export default function ContentView() {
-  const { id: courseId } = useParams<{ id: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { id: courseId, contentId } = useParams<{ id: string, contentId: string }>();
+  // const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
-  const contentId = searchParams.get("contentId");
+  // const contentId = searchParams.get("contentId");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contentToDelete, setContentToDelete] = useState<Content | null>(null);
@@ -254,9 +254,9 @@ export default function ContentView() {
       setDeleteDialogOpen(false);
       setContentToDelete(null);
       // Clear content selection if deleted content was selected
-      if (contentId && contentToDelete?.id === Number(contentId)) {
-        setSearchParams({});
-      }
+      // if (contentId && contentToDelete?.id === Number(contentId)) {
+      //   setSearchParams({});
+      // }
     },
   });
 
@@ -332,22 +332,17 @@ export default function ContentView() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className={cn("h-full flex flex-col transition-[padding-right] duration-300 ease-in-out", sidebarOpen && "pr-80")}>
       {/* Header */}
-      <div className="border-b p-4">
+      <div className="">
         <div className="flex items-start justify-between">
-          {/* <div>
-            <h1 className="text-2xl font-bold">{courseData?.title}</h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              {courseData?.description}
-            </p>
-          </div> */}
 
-          <div className="text-muted-foreground">
+          <div className="border p-1 bg-primary/20">
             {currentChapter && (
-              <h2 className="text-lg font-semibold">{currentChapter.title}</h2>
+              <h2 className="text-sm font-semibold">{currentChapter.title}</h2>
             )}
           </div>
+
           <Button
             variant="outline"
             size="icon"

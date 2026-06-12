@@ -282,13 +282,13 @@ export function ContentViewer({ contentId }: ContentViewerProps) {
   return (
     <div className="w-full space-y-4 py-2 animate-in fade-in slide-in-from-bottom-8 duration-1000">
       <div className="">
-        <div className="flex items-center gap-3 mb-2">
+        {/* <div className="flex items-center gap-3 mb-2">
           <div className="h-1.5 w-12 bg-primary rounded-full" />
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
             {content.type} Content
           </span>
-        </div>
-        <h2 className="text-2xl font-semibold text-foreground">
+        </div> */}
+        <h2 className="text-3xl font-semibold text-foreground">
           {content.title}
         </h2>
       </div>

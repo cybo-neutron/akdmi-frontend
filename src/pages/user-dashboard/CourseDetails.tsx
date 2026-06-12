@@ -114,7 +114,7 @@ export default function CourseDetails() {
   };
 
   const handleTopicSelect = (topic: Content) => {
-    navigate(`/dashboard/courses/${courseId}?contentId=${topic.id}`);
+    navigate(`/dashboard/courses/${courseId}/${topic.id}`);
   };
 
   return (

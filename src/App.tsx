@@ -17,10 +17,12 @@ import RootLayout from "./layouts/RootLayout";
 import Users from "./pages/users/Users";
 import Enrollments from "./pages/enrollments/Enrollments";
 import DashboardBlogs from "./pages/blogs/Blogs";
+import { Toaster } from "@/components/ui/sonner";
 
 export function App() {
   return (
     <>
+      <Toaster position="bottom-right" richColors />
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route element={<MainLayout />}>
@@ -38,7 +40,9 @@ export function App() {
           <Route path="/dashboard" element={<UserDashboardLayout />}>
             <Route path="" element={<UserDashboardHome />} />
             <Route path="courses" element={<Courses />} />
-            <Route path="courses/:id" element={<CourseRoute />} />
+            {/* <Route path="courses/:id" element={<CourseRoute />} /> */}
+            <Route path="courses/:id" element={<CourseDetails />} />
+            <Route path="courses/:id/:contentId" element={<ContentView />} />
             <Route path="settings" element={<UserSettings />} />
             <Route path="users" element={<Users />} />
             <Route path="enrollments" element={<Enrollments />} />

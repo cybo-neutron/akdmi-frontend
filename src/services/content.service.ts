@@ -193,3 +193,22 @@ export async function saveContentDocument(saveData: SaveDocumentData) {
 
   return data;
 }
+
+export interface ReorderItem {
+  id: number;
+  sequence: number;
+}
+
+/**
+ * Bulk-update sequence numbers for a set of content items.
+ * Pass only root-level chapter IDs, or only child topic IDs of a single
+ * parent — never mix the two in one call.
+ */
+export async function reorderContents(items: ReorderItem[]) {
+  const { data } = await axiosInterceptor.request({
+    method: "patch",
+    url: `/v1/contents/reorder`,
+    data: { items },
+  });
+  return data;
+}
