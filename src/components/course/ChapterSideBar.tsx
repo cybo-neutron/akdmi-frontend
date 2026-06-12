@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, FileIcon, FileText, Plus, Video, X } from "lucide-react";
+import { ChevronDown, ChevronUp, FileIcon, FileText, Plus, Video, X, CheckCircle2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { Progress } from "../ui/progress";
 import { type Content, type Chapter } from "@/services/content.service";
 
 function getContentIcon(type: string) {
@@ -26,6 +27,7 @@ export function ChapterSidebar({
   onAddTopic,
   isOpen,
   onClose,
+  completedTopicIds,
 }: {
   chapters: Chapter[];
   currentContentId: number | null;
@@ -34,10 +36,16 @@ export function ChapterSidebar({
   onAddTopic?: (chapterId: number) => void;
   isOpen: boolean;
   onClose: () => void;
+  completedTopicIds?: Set<number>;
 }) {
   const [expandedChapters, setExpandedChapters] = useState<Set<number>>(
     new Set(chapters.map((c) => c.id)),
   );
+
+  const allTopics = chapters.flatMap((chapter) => chapter.topics);
+  const totalTopicsCount = allTopics.length;
+  const completedTopicsCount = allTopics.filter((t) => completedTopicIds?.has(t.id)).length;
+  const progressPercentage = totalTopicsCount > 0 ? Math.round((completedTopicsCount / totalTopicsCount) * 100) : 0;
 
   const toggleChapter = (chapterId: number) => {
     setExpandedChapters((prev) => {
@@ -72,6 +80,15 @@ export function ChapterSidebar({
           </Button>
         </div>
       </div>
+      {completedTopicIds && totalTopicsCount > 0 && (
+        <div className="px-4 py-3 border-b bg-muted/20 space-y-1.5 shrink-0">
+          <div className="flex justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span>Course Progress</span>
+            <span>{progressPercentage}%</span>
+          </div>
+          <Progress value={progressPercentage} className="h-2 rounded-full" />
+        </div>
+      )}
       <div className="overflow-y-auto h-[calc(100%-60px)] p-4 space-y-2">
         {chapters.map((chapter) => (
           <div key={chapter.id} className="border rounded-lg overflow-hidden">
@@ -98,7 +115,11 @@ export function ChapterSidebar({
                       "bg-primary/10 text-primary",
                     )}
                   >
-                    {getContentIcon(topic.type)}
+                    {completedTopicIds?.has(topic.id) ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                    ) : (
+                      getContentIcon(topic.type)
+                    )}
                     <span className="truncate">- {topic.title}</span>
                   </button>
                 ))}

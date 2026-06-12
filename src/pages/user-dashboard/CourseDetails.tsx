@@ -26,7 +26,7 @@ import {
   CheckCircle2,
   Plus,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { usePermissionStore } from "@/store/usePermissionStore";
 import { Resource } from "@/types/resource.types";
@@ -34,6 +34,8 @@ import { Action } from "@/types/permission.type";
 import { ContentDialog } from "@/components/content/ContentDialog";
 import { ContentTypeDialog } from "@/components/content/ContentTypeDialog";
 import type { UserRoleType } from "@/types/auth.types";
+import { MetaBadge } from "@/components/course/MetaBadge";
+import { getCourseProgress } from "@/services/progress.service";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -125,6 +127,8 @@ export default function CourseDetails() {
     enabled: !!courseId,
   });
 
+  console.log(courseData)
+
   const { data: contentsData, isLoading: contentsLoading } = useQuery({
     queryKey: ["contents", courseId],
     queryFn: () => getContentsByCourse(courseId!),
@@ -136,6 +140,21 @@ export default function CourseDetails() {
     queryFn: () => checkMyEnrollment(courseId!),
     enabled: !!courseId,
   });
+
+  // Fetch progress
+  const { data: progressData } = useQuery({
+    queryKey: ["course-progress", courseId],
+    queryFn: () => getCourseProgress(courseId!),
+    enabled: !!courseId,
+  });
+
+  const completedTopicIds = useMemo(() => {
+    return new Set(
+      progressData?.logs
+        ?.filter((log) => log.completionStatus === "completed")
+        ?.map((log) => log.contentId) || []
+    );
+  }, [progressData]);
 
   // ── Enroll mutation ──
   const enrollMutation = useMutation({
@@ -215,7 +234,7 @@ export default function CourseDetails() {
         </h1>
 
         <div className="flex flex-wrap items-center gap-2">
-          <MetaBadge icon={<User className="h-3.5 w-3.5" />} label="Instructor" />
+          <MetaBadge icon={<User className="h-3.5 w-3.5" />} label={course.author ?? "Instructor"} />
           <MetaBadge
             icon={<Clock className="h-3.5 w-3.5" />}
             label={`${totalLessons} ${totalLessons === 1 ? "Lesson" : "Lessons"}`}
@@ -297,6 +316,7 @@ export default function CourseDetails() {
           chapters={chapters}
           onSelectTopic={handleTopicSelect}
           onAddTopic={canEdit ? handleAddTopic : undefined}
+          completedTopicIds={completedTopicIds}
         />
       </section>
 
@@ -330,22 +350,5 @@ export default function CourseDetails() {
         />
       )}
     </div>
-  );
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function MetaBadge({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 bg-muted rounded-sm uppercase tracking-wide">
-      {icon}
-      {label}
-    </span>
   );
 }

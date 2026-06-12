@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCourseById } from "@/services/course.service";
@@ -23,7 +23,10 @@ import {
   FileIcon,
   Video,
   X,
+  MoveRight,
+  CheckCircle2,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +45,7 @@ import { Separator } from "@/components/ui/separator";
 import { ChapterSidebar } from "@/components/course/ChapterSideBar";
 import { useAuthStore } from "@/store/useAuthStore";
 import { usePermissionStore } from "@/store/usePermissionStore";
+import { getCourseProgress, upsertProgress } from "@/services/progress.service";
 import { Resource } from "@/types/resource.types";
 import { Action } from "@/types/permission.type";
 
@@ -97,10 +101,12 @@ function ChapterOverview({
   chapter,
   topics,
   onSelectTopic,
+  completedTopicIds,
 }: {
   chapter: Content;
   topics: Content[];
   onSelectTopic: (topic: Content) => void;
+  completedTopicIds?: Set<number>;
 }) {
   return (
     <div className="max-w-2xl mx-auto px-6 py-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -139,7 +145,11 @@ function ChapterOverview({
                   {String(idx + 1).padStart(2, "0")}
                 </span>
                 <span className="shrink-0 text-muted-foreground">
-                  {getContentIcon(topic.type)}
+                  {completedTopicIds?.has(topic.id) ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  ) : (
+                    getContentIcon(topic.type)
+                  )}
                 </span>
                 <span className="flex-1 text-sm font-medium truncate">
                   {topic.title}
@@ -214,6 +224,23 @@ export default function ContentView() {
     enabled: !!courseId,
   });
 
+  // Fetch progress
+  const { data: progressData } = useQuery({
+    queryKey: ["course-progress", courseId],
+    queryFn: () => getCourseProgress(courseId!),
+    enabled: !!courseId,
+  });
+
+  console.log(progressData)
+
+  const completedTopicIds = useMemo(() => {
+    return new Set(
+      progressData?.logs
+        ?.filter((log) => log.completionStatus === "completed")
+        ?.map((log) => log.contentId) || []
+    );
+  }, [progressData]);
+
   const contents: Content[] = contentsData?.data || contentsData || [];
   const chapters = organizeContent(contents);
 
@@ -232,6 +259,41 @@ export default function ContentView() {
   const currentTopicIndex = allTopics.findIndex(
     (t) => t.id === Number(contentId),
   );
+
+  const isLastTopic = currentTopicIndex === allTopics.length - 1;
+  const buttonText = isLastTopic ? "Finish Course" : "Mark Complete & Continue";
+
+  const isCurrentTopicCompleted = currentContent ? completedTopicIds.has(currentContent.id) : false;
+
+  const toggleCompleteMutation = useMutation({
+    mutationFn: ({ contentId, status }: { contentId: number; status: "completed" | "in_progress" }) =>
+      upsertProgress(contentId, status),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["course-progress", courseId] });
+      if (variables.status === "completed") {
+        if (isLastTopic) {
+          toast.success("Congratulations! You have finished the course!");
+          navigate(`/dashboard/courses/${courseId}`);
+        } else {
+          const nextTopic = allTopics[currentTopicIndex + 1];
+          navigate(`/dashboard/courses/${courseId}/${nextTopic.id}`);
+        }
+      } else {
+        toast.success("Marked as incomplete.");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to update completion status.");
+    },
+  });
+
+  const handleToggleComplete = () => {
+    if (!currentContent) return;
+    toggleCompleteMutation.mutate({
+      contentId: currentContent.id,
+      status: isCurrentTopicCompleted ? "in_progress" : "completed",
+    });
+  };
 
   // Delete mutation
   const deleteMutation = useMutation({
@@ -356,6 +418,7 @@ export default function ContentView() {
             onSelectTopic={(topic) =>
               navigate(`/dashboard/courses/${courseId}/${topic.id}`)
             }
+            completedTopicIds={completedTopicIds}
           />
         ) : (
           /* Topic selected — show full content viewer */
@@ -388,6 +451,25 @@ export default function ContentView() {
         </div>
 
         <div className="flex gap-2">
+          {currentContent && currentContent.parentId !== null && (
+            <Button
+              variant={isCurrentTopicCompleted ? "outline" : "default"}
+              onClick={handleToggleComplete}
+              disabled={toggleCompleteMutation.isPending}
+            >
+              {toggleCompleteMutation.isPending ? "Saving..." : (
+                isCurrentTopicCompleted ? (
+                  "Mark Incomplete"
+                ) : (
+                  <>
+                    {buttonText} <MoveRight className="ml-2 h-4 w-4" />
+                  </>
+                )
+              )}
+            </Button>
+          )}
+
+
           {canEdit && (
             <Button
               variant="outline"
@@ -432,6 +514,7 @@ export default function ContentView() {
         onAddTopic={canEdit ? handleAddTopic : undefined}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        completedTopicIds={completedTopicIds}
       />
 
       {/* Overlay when sidebar is open */}

@@ -27,6 +27,7 @@ import {
   FileIcon,
   GripVertical,
   Plus,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Content } from "@/services/content.service";
@@ -51,6 +52,7 @@ interface CourseCurriculumProps {
   onReorderTopics?: (chapterId: number, newTopics: Content[]) => void;
   /** Called when the user clicks 'Add topic' inside a chapter row. */
   onAddTopic?: (chapterId: number) => void;
+  completedTopicIds?: Set<number>;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -82,9 +84,10 @@ interface SortableTopicRowProps {
   topic: Content;
   canEdit: boolean;
   onSelect?: (topic: Content) => void;
+  isCompleted?: boolean;
 }
 
-function SortableTopicRow({ topic, canEdit, onSelect }: SortableTopicRowProps) {
+function SortableTopicRow({ topic, canEdit, onSelect, isCompleted }: SortableTopicRowProps) {
   const {
     attributes,
     listeners,
@@ -130,7 +133,11 @@ function SortableTopicRow({ topic, canEdit, onSelect }: SortableTopicRowProps) {
         )}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <TopicIcon type={topic.type} />
+          {isCompleted ? (
+            <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+          ) : (
+            <TopicIcon type={topic.type} />
+          )}
           <span className="text-sm truncate">{topic.title}</span>
         </div>
         <span className="text-xs text-muted-foreground shrink-0 ml-3">
@@ -152,6 +159,7 @@ interface SortableChapterRowProps {
   onSelectTopic?: (topic: Content) => void;
   onReorderTopics?: (newTopics: Content[]) => void;
   onAddTopic?: (chapterId: number) => void;
+  completedTopicIds?: Set<number>;
 }
 
 function SortableChapterRow({
@@ -163,6 +171,7 @@ function SortableChapterRow({
   onSelectTopic,
   onReorderTopics,
   onAddTopic,
+  completedTopicIds,
 }: SortableChapterRowProps) {
   // ── Chapter sortable (outer DndContext) ──
   const {
@@ -289,6 +298,7 @@ function SortableChapterRow({
                     topic={topic}
                     canEdit={canEdit}
                     onSelect={onSelectTopic}
+                    isCompleted={completedTopicIds?.has(topic.id)}
                   />
                 ))}
               </SortableContext>
@@ -302,7 +312,11 @@ function SortableChapterRow({
                 className="w-full flex items-center justify-between px-6 py-2.5 hover:bg-muted/30 transition-colors text-left"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <TopicIcon type={topic.type} />
+                  {completedTopicIds?.has(topic.id) ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                  ) : (
+                    <TopicIcon type={topic.type} />
+                  )}
                   <span className="text-sm truncate">{topic.title}</span>
                 </div>
                 <span className="text-xs text-muted-foreground shrink-0 ml-3">
@@ -335,6 +349,7 @@ export function CourseCurriculum({
   onReorderChapters,
   onReorderTopics,
   onAddTopic,
+  completedTopicIds,
 }: CourseCurriculumProps) {
   // ── Permission check ──
   const userDetails = useAuthStore((s) => s.userDetails);
@@ -459,6 +474,7 @@ export function CourseCurriculum({
               handleTopicReorder(chapter.id, newTopics)
             }
             onAddTopic={onAddTopic}
+            completedTopicIds={completedTopicIds}
           />
         ))}
       </div>
