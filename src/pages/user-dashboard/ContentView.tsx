@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCourseById } from "@/services/course.service";
 import {
@@ -37,6 +37,7 @@ import { ContentDialog } from "@/components/content/ContentDialog";
 import { ContentTypeDialog } from "@/components/content/ContentTypeDialog";
 import { cn } from "@/lib/utils";
 import { ContentViewer } from "@/components/content/ContentViewer";
+import { Separator } from "@/components/ui/separator";
 
 interface Chapter extends Content {
   topics: Content[];
@@ -191,12 +192,87 @@ function ChapterSidebar({
   );
 }
 
+// ─── Chapter Overview ─────────────────────────────────────────────────────────
+
+function ChapterOverview({
+  chapter,
+  topics,
+  onSelectTopic,
+}: {
+  chapter: Content;
+  topics: Content[];
+  onSelectTopic: (topic: Content) => void;
+}) {
+  return (
+    <div className="max-w-2xl mx-auto px-6 py-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Chapter label + title */}
+      <div className="space-y-1">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+          Chapter
+        </p>
+        <h1 className="text-3xl font-bold leading-tight">{chapter.title}</h1>
+      </div>
+
+      {/* Description */}
+      {chapter.description && (
+        <p className="text-muted-foreground leading-relaxed text-sm">
+          {chapter.description}
+        </p>
+      )}
+
+      <Separator />
+
+      {/* Topics list */}
+      {topics.length > 0 ? (
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            {topics.length} {topics.length === 1 ? "Lesson" : "Lessons"}
+          </p>
+
+          <div className="rounded-md border divide-y overflow-hidden">
+            {topics.map((topic, idx) => (
+              <button
+                key={topic.id}
+                onClick={() => onSelectTopic(topic)}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left group"
+              >
+                <span className="text-xs text-muted-foreground font-mono shrink-0 w-5">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <span className="shrink-0 text-muted-foreground">
+                  {getContentIcon(topic.type)}
+                </span>
+                <span className="flex-1 text-sm font-medium truncate">
+                  {topic.title}
+                </span>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+              </button>
+            ))}
+          </div>
+
+          <Button
+            size="lg"
+            className="w-full mt-2"
+            onClick={() => onSelectTopic(topics[0])}
+          >
+            Start Chapter
+          </Button>
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          No lessons in this chapter yet.
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function ContentView() {
-  const { id: courseId, contentId } = useParams<{ id: string, contentId: string }>();
-  // const [searchParams, setSearchParams] = useSearchParams();
+  const { id: courseId, contentId } = useParams<{ id: string; contentId: string }>();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // const contentId = searchParams.get("contentId");
+  // Remove stale comment
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contentToDelete, setContentToDelete] = useState<Content | null>(null);
@@ -261,20 +337,20 @@ export default function ContentView() {
   });
 
   const handleSelectContent = (content: Content) => {
-    setSearchParams({ contentId: String(content.id) });
+    navigate(`/dashboard/courses/${courseId}/${content.id}`);
   };
 
   const handlePrevTopic = () => {
     if (currentTopicIndex > 0) {
       const prevTopic = allTopics[currentTopicIndex - 1];
-      setSearchParams({ contentId: String(prevTopic.id) });
+      navigate(`/dashboard/courses/${courseId}/${prevTopic.id}`);
     }
   };
 
   const handleNextTopic = () => {
     if (currentTopicIndex < allTopics.length - 1) {
       const nextTopic = allTopics[currentTopicIndex + 1];
-      setSearchParams({ contentId: String(nextTopic.id) });
+      navigate(`/dashboard/courses/${courseId}/${nextTopic.id}`);
     }
   };
 
@@ -354,8 +430,22 @@ export default function ContentView() {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1">
-        <ContentViewer contentId={contentId ? Number(contentId) : null} />
+      <div className="flex-1 overflow-y-auto">
+        {currentContent && currentContent.parentId === null ? (
+          /* Chapter selected — show overview with topic list */
+          <ChapterOverview
+            chapter={currentContent}
+            topics={
+              chapters.find((c) => c.id === currentContent.id)?.topics ?? []
+            }
+            onSelectTopic={(topic) =>
+              navigate(`/dashboard/courses/${courseId}/${topic.id}`)
+            }
+          />
+        ) : (
+          /* Topic selected — show full content viewer */
+          <ContentViewer contentId={contentId ? Number(contentId) : null} />
+        )}
       </div>
 
       {/* Footer Navigation */}

@@ -1,7 +1,12 @@
 import { useParams, useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { getCourseById } from "@/services/course.service";
 import { getContentsByCourse, type Content } from "@/services/content.service";
+import {
+  checkMyEnrollment,
+  selfEnroll,
+} from "@/services/enrollment.service";
 import { CourseHero } from "@/components/course/CourseHero";
 import {
   CourseCurriculum,
@@ -16,6 +21,9 @@ import {
   BarChart2,
   LayoutList,
   BookOpen,
+  MoveRight,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -69,7 +77,9 @@ function CourseDetailsSkeleton() {
 export default function CourseDetails() {
   const { id: courseId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
+  // ── Data queries ──
   const { data: courseData, isLoading: courseLoading } = useQuery({
     queryKey: ["course", courseId],
     queryFn: () => getCourseById(courseId!),
@@ -80,6 +90,38 @@ export default function CourseDetails() {
     queryKey: ["contents", courseId],
     queryFn: () => getContentsByCourse(courseId!),
     enabled: !!courseId,
+  });
+
+  const { data: enrollmentData, isLoading: enrollmentLoading } = useQuery({
+    queryKey: ["enrollment-check", courseId],
+    queryFn: () => checkMyEnrollment(courseId!),
+    enabled: !!courseId,
+  });
+
+  // ── Enroll mutation ──
+  const enrollMutation = useMutation({
+    mutationFn: () => selfEnroll(courseId!),
+    onSuccess: () => {
+      toast.success("You're enrolled! Let's start learning.");
+      // Invalidate so the button switches to "Continue Learning"
+      queryClient.invalidateQueries({ queryKey: ["enrollment-check", courseId] });
+      // Navigate to first topic
+      const firstTopic = chapters[0]?.topics[0];
+      if (firstTopic) {
+        navigate(`/dashboard/courses/${courseId}/${firstTopic.id}`);
+      }
+    },
+    onError: (error: any) => {
+      // 409 = already enrolled — just navigate
+      if (error?.response?.status === 409) {
+        const firstTopic = chapters[0]?.topics[0];
+        if (firstTopic) {
+          navigate(`/dashboard/courses/${courseId}/${firstTopic.id}`);
+        }
+        return;
+      }
+      toast.error("Enrollment failed. Please try again.");
+    },
   });
 
   if (courseLoading || contentsLoading) {
@@ -106,15 +148,26 @@ export default function CourseDetails() {
     );
   }
 
-  const handleStartLearning = () => {
-    const firstTopic = chapters[0]?.topics[0];
-    if (firstTopic) {
-      navigate(`/dashboard/courses/${courseId}?contentId=${firstTopic.id}`);
-    }
-  };
+  const isEnrolled = enrollmentData?.isEnrolled ?? false;
+  const isEnrollmentKnown = !enrollmentLoading;
 
   const handleTopicSelect = (topic: Content) => {
     navigate(`/dashboard/courses/${courseId}/${topic.id}`);
+  };
+
+  const handleCTAClick = () => {
+    if (isEnrolled) {
+      // Already enrolled — jump straight to first topic
+      const firstChapter = chapters[0];
+      console.log({
+        chapters
+      })
+      if (firstChapter) {
+        navigate(`/dashboard/courses/${courseId}/${firstChapter.id}`);
+      }
+    } else {
+      enrollMutation.mutate();
+    }
   };
 
   return (
@@ -135,6 +188,12 @@ export default function CourseDetails() {
             icon={<BarChart2 className="h-3.5 w-3.5" />}
             label={course.level ?? "All Levels"}
           />
+          {isEnrolled && (
+            <MetaBadge
+              icon={<CheckCircle2 className="h-3.5 w-3.5 text-primary" />}
+              label="Enrolled"
+            />
+          )}
         </div>
       </div>
 
@@ -145,10 +204,28 @@ export default function CourseDetails() {
         title={course.title}
       />
 
-      {/* ── Start Learning CTA ── */}
+      {/* ── Enroll / Continue CTA ── */}
       {totalLessons > 0 && (
-        <Button size="lg" className="w-full" onClick={handleStartLearning}>
-          Start Learning
+        <Button
+          size="lg"
+          className="w-full"
+          onClick={handleCTAClick}
+          disabled={enrollMutation.isPending || !isEnrollmentKnown}
+        >
+          {enrollMutation.isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Enrolling…
+            </>
+          ) : isEnrolled ? (
+            <>
+              Continue Learning <MoveRight className="ml-2 h-4 w-4" />
+            </>
+          ) : (
+            <>
+              ENROLL NOW <MoveRight className="ml-2 h-4 w-4" />
+            </>
+          )}
         </Button>
       )}
 
