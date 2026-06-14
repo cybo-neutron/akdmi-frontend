@@ -510,8 +510,6 @@ export default function ContentView() {
         chapters={chapters}
         currentContentId={contentId ? Number(contentId) : null}
         onSelectContent={handleSelectContent}
-        onAddChapter={canEdit ? handleAddChapter : undefined}
-        onAddTopic={canEdit ? handleAddTopic : undefined}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         completedTopicIds={completedTopicIds}

@@ -36,6 +36,7 @@ import { ContentTypeDialog } from "@/components/content/ContentTypeDialog";
 import type { UserRoleType } from "@/types/auth.types";
 import { MetaBadge } from "@/components/course/MetaBadge";
 import { getCourseProgress } from "@/services/progress.service";
+import { Progress } from "@/components/ui/progress";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -156,6 +157,20 @@ export default function CourseDetails() {
     );
   }, [progressData]);
 
+  const contents: Content[] = useMemo(() => {
+    return contentsData?.data ?? contentsData ?? [];
+  }, [contentsData]);
+
+  const chapters = useMemo(() => organizeContent(contents), [contents]);
+  const totalLessons = useMemo(() => chapters.reduce((acc, ch) => acc + ch.topics.length, 0), [chapters]);
+  const completedLessons = useMemo(() => {
+    return chapters.reduce(
+      (acc, ch) => acc + ch.topics.filter((t) => completedTopicIds.has(t.id)).length,
+      0
+    );
+  }, [chapters, completedTopicIds]);
+  const progressPercentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
   // ── Enroll mutation ──
   const enrollMutation = useMutation({
     mutationFn: () => selfEnroll(courseId!),
@@ -187,9 +202,6 @@ export default function CourseDetails() {
   }
 
   const course = courseData?.data ?? courseData;
-  const contents: Content[] = contentsData?.data ?? contentsData ?? [];
-  const chapters = organizeContent(contents);
-  const totalLessons = chapters.reduce((acc, ch) => acc + ch.topics.length, 0);
 
   if (!course) {
     return (
@@ -251,6 +263,33 @@ export default function CourseDetails() {
           )}
         </div>
       </div>
+
+      {/* Progress bar */}
+      {isEnrolled && totalLessons > 0 && (
+        <div className="bg-card border rounded-2xl p-5 shadow-xs transition-all duration-300 hover:shadow-md animate-in fade-in-50 slide-in-from-top-4 space-y-3">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <span className="font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                Course Progress
+              </span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-black tracking-tight text-primary">
+                  {progressPercentage}%
+                </span>
+                <span className="text-muted-foreground text-xs font-normal">
+                  Completed
+                </span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-xs font-medium bg-muted text-muted-foreground px-3 py-1 rounded-full uppercase tracking-wider">
+                {completedLessons} / {totalLessons} Lessons
+              </span>
+            </div>
+          </div>
+          <Progress value={progressPercentage} className="h-2 rounded-full" />
+        </div>
+      )}
 
       {/* ── Hero ── */}
       <CourseHero

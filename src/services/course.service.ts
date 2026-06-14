@@ -64,3 +64,12 @@ export async function getCourseMediaPresignedUrl({
   return data;
 }
 
+export async function getPublicCourses() {
+  const { data } = await axiosInterceptor.request({
+    method: "get",
+    url: `/v1/courses/public`,
+  });
+
+  return data;
+}
+

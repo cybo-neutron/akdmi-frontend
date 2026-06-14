@@ -1,14 +1,18 @@
 import { Link, Outlet, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Rocket } from "lucide-react";
+import { MoveRight, Rocket } from "lucide-react";
 import ThemeSelector from "@/components/custom/ThemeSelector";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useCallback, useMemo } from "react";
 
 const MainLayout = () => {
   const navigate = useNavigate();
+  const { isUserLoggedIn } = useAuthStore();
+
 
   return (
-    <div className="min-h-screen flex flex-col p-2">
-      <nav className="flex items-center justify-between px-4 py-2 border-b mb-4">
+    <div className="flex flex-col">
+      <nav className="flex w-full items-center justify-between px-4 py-2 fixed top-0 z-50 ">
         <Link
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -31,16 +35,25 @@ const MainLayout = () => {
             Blogs
           </Link>
           <Link
-            to="/pricing"
+            to="/courses"
             className="text-sm font-medium transition-colors hover:text-primary"
           >
-            Pricing
+            Courses
           </Link>
         </div>
 
         <div className="flex items-center gap-4">
+
           <ThemeSelector />
-          <Button onClick={() => navigate("/login")}>Login</Button>
+          {
+            isUserLoggedIn ?
+              <Button onClick={() => navigate("/dashboard")}>
+                Go to Dashboard
+                <MoveRight />
+              </Button>
+              :
+              <Button onClick={() => navigate("/login")}>Login</Button>
+          }
         </div>
       </nav>
 

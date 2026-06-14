@@ -141,8 +141,6 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
   authMe: async () => {
     const response = await verifyAccessToken();
 
-    console.log(response);
-
     if (response) {
       const { userId, role, email, firstName, lastName } = response;
       if (!userId) {

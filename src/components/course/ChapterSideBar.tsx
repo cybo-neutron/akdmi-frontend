@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, FileIcon, FileText, Plus, Video, X, CheckCircle2 } from "lucide-react";
+import { ChevronDown, ChevronUp, FileIcon, FileText, Video, X, CheckCircle2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { type Content, type Chapter } from "@/services/content.service";
@@ -23,8 +23,6 @@ export function ChapterSidebar({
   chapters,
   currentContentId,
   onSelectContent,
-  onAddChapter,
-  onAddTopic,
   isOpen,
   onClose,
   completedTopicIds,
@@ -32,8 +30,6 @@ export function ChapterSidebar({
   chapters: Chapter[];
   currentContentId: number | null;
   onSelectContent: (content: Content) => void;
-  onAddChapter?: () => void;
-  onAddTopic?: (chapterId: number) => void;
   isOpen: boolean;
   onClose: () => void;
   completedTopicIds?: Set<number>;
@@ -69,12 +65,12 @@ export function ChapterSidebar({
       <div className="flex items-center justify-between p-4 border-b">
         <h3 className="font-semibold">Chapter List</h3>
         <div className="flex items-center gap-2">
-          {onAddChapter && (
+          {/* {onAddChapter && (
             <Button size="sm" onClick={onAddChapter}>
               <Plus className="h-4 w-4 mr-1" />
               Add Chapter
             </Button>
-          )}
+          )} */}
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -123,7 +119,7 @@ export function ChapterSidebar({
                     <span className="truncate">- {topic.title}</span>
                   </button>
                 ))}
-                {onAddTopic && (
+                {/* {onAddTopic && (
                   <button
                     onClick={() => onAddTopic(chapter.id)}
                     className="w-full flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:bg-muted/50 transition-colors border-t"
@@ -131,7 +127,7 @@ export function ChapterSidebar({
                     <Plus className="h-3 w-3" />
                     Add topic
                   </button>
-                )}
+                )} */}
               </div>
             )}
           </div>

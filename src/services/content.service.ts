@@ -108,6 +108,15 @@ export async function getContentsByCourse(courseId: string | number) {
   return data;
 }
 
+export async function getContentsByCoursePublic(courseId: string | number) {
+  const { data } = await axiosInterceptor.request({
+    method: "get",
+    url: `/v1/contents/public/${courseId}`,
+  });
+
+  return data;
+}
+
 export async function getContentById(contentId: string | number) {
   const { data } = await axiosInterceptor.request({
     method: "get",

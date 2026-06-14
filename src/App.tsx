@@ -1,4 +1,4 @@
-import { Routes, Route, useSearchParams } from "react-router";
+import { Routes, Route } from "react-router";
 import Login from "./pages/register/Login";
 import MainLayout from "./layouts/MainLayout";
 import SignUp from "./pages/register/SignUp";
@@ -6,6 +6,8 @@ import MainPage from "./pages/register/homepage/mainpage";
 import Blogs from "./pages/register/homepage/Blogs";
 import BlogView from "./pages/register/homepage/BlogView";
 import Pricing from "./pages/register/homepage/Pricing";
+import PublicCourses from "./pages/register/homepage/Courses";
+import PublicCourseView from "./pages/register/homepage/PublicCourseView";
 import AuthLayout from "./layouts/AuthLayout";
 import UserDashboardLayout from "./layouts/user-dashboard-layout";
 import UserDashboardHome from "./pages/user-dashboard/UserDashboardHome";
@@ -30,6 +32,8 @@ export function App() {
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blog" element={<BlogView />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/courses" element={<PublicCourses />} />
+            <Route path="/courses/:id" element={<PublicCourseView />} />
           </Route>
 
           <Route element={<AuthLayout />}>
@@ -52,12 +56,6 @@ export function App() {
       </Routes>
     </>
   );
-}
-
-/** Renders CourseDetails normally; switches to ContentView when ?contentId is present. */
-function CourseRoute() {
-  const [searchParams] = useSearchParams();
-  return searchParams.has("contentId") ? <ContentView /> : <CourseDetails />;
 }
 
 export default App;

@@ -47,7 +47,7 @@ const Blogs = () => {
   const blogs = paginatedData?.blogs ?? [];
 
   return (
-    <div className="py-20 px-4 max-w-6xl mx-auto">
+    <div className="pt-20 px-4">
       <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
         <div className="max-w-2xl">
           <Badge variant="outline" className="mb-4 text-primary">
