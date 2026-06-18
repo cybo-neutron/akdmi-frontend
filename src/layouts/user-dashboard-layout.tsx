@@ -13,6 +13,7 @@ import {
   SquareActivity,
   UserStar,
   NotebookText,
+  Rocket,
 } from "lucide-react";
 
 import {
@@ -128,16 +129,17 @@ export default function UserDashboardLayout() {
         collapsible="icon"
         className="border-r border-sidebar-border bg-sidebar animate-in slide-in-from-left duration-300"
       >
-        <SidebarHeader className="h-16 flex items-center px-4 border-b border-sidebar-border">
-          <Link to="/" className="flex items-center gap-3 group">
+        <SidebarHeader className="h-16 flex w-full px-4 border-b border-sidebar-border">
+          <Link to="/" className="flex  justify-start gap-3 items-center group">
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
-              <Command className="size-5" />
+              {/* <Command className="size-5" /> */}
+              <Rocket />
             </div>
             <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
-              <span className="font-semibold text-sidebar-foreground">ICI</span>
-              <span className="text-[10px] text-muted-foreground">
+              <span className="font-semibold text-sidebar-foreground">AKDMI</span>
+              {/* <span className="text-[10px] text-muted-foreground">
                 Improvement Coaching Institute
-              </span>
+              </span> */}
             </div>
           </Link>
         </SidebarHeader>
