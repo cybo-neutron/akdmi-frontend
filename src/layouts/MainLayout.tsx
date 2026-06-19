@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { MoveRight, Rocket } from "lucide-react";
 import ThemeSelector from "@/components/custom/ThemeSelector";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useCallback, useMemo } from "react";
 
 const MainLayout = () => {
   const navigate = useNavigate();
@@ -12,7 +11,7 @@ const MainLayout = () => {
 
   return (
     <div className="flex flex-col">
-      <nav className="flex w-full items-center justify-between px-4 py-2 fixed top-0 z-50 ">
+      <nav className="backdrop-blur-sm flex w-full items-center justify-between px-4 py-2 fixed top-0 z-50 ">
         <Link
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
