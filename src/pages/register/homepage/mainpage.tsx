@@ -20,6 +20,9 @@ import {
   Twitter,
   Github,
   Youtube,
+  Rocket,
+  Coffee,
+  Heart,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import heroImage from "../../../../public/6ba0a2037bb29603e16d1eba79f3e7a580aa600b31bdb0669151f329a30c6a84.png";
@@ -52,40 +55,40 @@ function getPlaceholderImage(index: number) {
 // ─── Features Section ─────────────────────────────────────────────────────────
 const features = [
   {
-    icon: Globe,
-    title: "Custom Subdomains",
+    icon: BookOpen,
+    title: "Structured Course Catalog",
     description:
-      "Connect your own domain or use one of ours. Your students see your brand, not ours.",
+      "Explore and discover a wide variety of courses curated and structured specifically for learning.",
   },
   {
     icon: Layers,
-    title: "Rich Multimedia",
+    title: "Rich Text & Video Lessons",
     description:
-      "Upload videos, PDFs, interactive documents, and rich text articles for a complete learning experience.",
-  },
-  {
-    icon: Layout,
-    title: "Dynamic Catalog",
-    description:
-      "Automatically generate a beautiful storefront sharing all your available courses at once.",
-  },
-  {
-    icon: Zap,
-    title: "AI-Powered Builder",
-    description:
-      "Let AI help you draft course outlines, generate descriptions, and accelerate content creation.",
-  },
-  {
-    icon: BookOpen,
-    title: "Student Progress",
-    description:
-      "Track how learners progress through lessons, chapters, and quizzes in real time.",
+      "Learn effectively with structured text-based guides, reading materials, and high-quality video lessons.",
   },
   {
     icon: User,
-    title: "Creator Analytics",
+    title: "Vetted Mentors",
     description:
-      "Understand your audience with enrollment stats, completion rates, and engagement metrics.",
+      "All mentors are carefully onboarded and verified by administrators to ensure top-tier educational quality.",
+  },
+  {
+    icon: Zap,
+    title: "Track Your Progress",
+    description:
+      "Easily track your progress per course, knowing exactly which lessons you have completed and where to pick up.",
+  },
+  {
+    icon: Layout,
+    title: "Dedicated Student Portal",
+    description:
+      "Sign up as a student to enroll in courses, view active classes, and access all your study materials in one place.",
+  },
+  {
+    icon: Globe,
+    title: "Seamless Web Access",
+    description:
+      "Log in from any device to access your courses, watch lectures, and read resources whenever you want.",
   },
 ];
 
@@ -98,11 +101,10 @@ function FeaturesSection() {
             Platform Features
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            Everything You Need to Succeed
+            Designed for Guided Learning
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            From white-labeling to rich content delivery, we provide the tools
-            you need to build a premium educational brand.
+            From admin-approved mentors to detailed lesson tracking, our platform provides all the essential tools for a premium educational experience.
           </p>
         </div>
 
@@ -157,7 +159,7 @@ function CoursesPreviewSection() {
               Start Learning Today
             </h2>
             <p className="text-muted-foreground mt-2 max-w-md">
-              Browse our catalog of professional courses crafted by industry experts.
+              Browse our catalog of professional courses crafted by verified mentors.
             </p>
           </div>
           <Button
@@ -247,7 +249,7 @@ const footerLinks = {
   Company: [
     { label: "About Us", href: "#" },
     { label: "Blog", href: "/blogs" },
-    { label: "Pricing", href: "/pricing" },
+    // { label: "Pricing", href: "/pricing" },
   ],
   Support: [
     { label: "Help Center", href: "#" },
@@ -276,12 +278,12 @@ function FooterSection() {
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <BookOpen className="w-4 h-4 text-primary-foreground" />
+                <Rocket className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-black text-lg tracking-tight">CourseEmpire</span>
+              <span className="font-black text-lg tracking-tight">AKDMI</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-              The all-in-one platform to build, sell, and grow your online course business under your own brand.
+              A premium learning platform providing high-quality video and text-based courses to help you grow your skills.
             </p>
             {/* Social links */}
             <div className="flex gap-3 mt-6">
@@ -323,10 +325,17 @@ function FooterSection() {
         {/* Bottom row */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground">
-            © {year} CourseEmpire. All rights reserved.
+            © {year} Akdmi. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground">
-            Built with ❤️ for creators worldwide.
+          <p className="text-xs text-muted-foreground flex justify-center items-center gap-2">
+            <span>
+              Built with 
+            </span>
+            <span>
+              <Heart size={20} className="text-red-500" />
+            </span>
+            <span>and</span>
+            <span><Coffee size={20} className="text-amber-800" /> </span>
           </p>
         </div>
       </div>
@@ -347,16 +356,15 @@ const MainPage = () => {
           <div className="space-y-6 text-left max-w-lg">
             <Badge
               variant="outline"
-              className="px-4 py-1 border-primary/20 bg-primary/5 text-primary animate-pulse uppercase tracking-wider text-xs font-semibold"
+              className="px-4 py-1 border-primary/20 bg-primary/5 text-primary uppercase tracking-wider text-xs font-semibold"
             >
-              New: AI-Powered Course Builder
+              Interactive Online Academy
             </Badge>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight uppercase">
-              Create Your Course Empire Under Your Own Brand
+              Learn From Vetted Mentors and Industry Experts
             </h1>
             <p className="text-muted-foreground text-md leading-relaxed">
-              The all-in-one platform to build a professional course catalog,
-              connect your own domain, and sell directly to your students.
+              A unified platform offering structured text and video courses. Sign up as a student, enroll in courses, track your progress, and elevate your skills.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <Button
@@ -396,6 +404,5 @@ const MainPage = () => {
     </div>
   );
 };
-
 
 export default MainPage;
