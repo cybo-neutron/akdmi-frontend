@@ -56,8 +56,7 @@ export default function Login() {
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
-              defaultValue="john.wick@email.com"
+              placeholder="john.wick@example.com"
               required
               {...register("email")}
             />
@@ -65,17 +64,16 @@ export default function Login() {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <Link to="#" className="ml-auto inline-block text-sm underline">
+              {/* <Link to="#" className="ml-auto inline-block text-sm underline">
                 Forgot your password?
-              </Link>
+              </Link> */}
             </div>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 className="pr-10"
-                placeholder="Enter password"
-                defaultValue="password001"
+                placeholder="john.wick123#"
                 required
                 {...register("password")}
               />
