@@ -251,7 +251,7 @@ export default function UserDashboardLayout() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative hidden lg:block group">
+            {/* <div className="relative hidden lg:block group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 placeholder="Search resources..."
@@ -260,7 +260,7 @@ export default function UserDashboardLayout() {
               <div className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded border bg-background text-[10px] font-mono opacity-0 group-focus-within:opacity-100 transition-opacity">
                 ⌘K
               </div>
-            </div>
+            </div> */}
 
             {/* Notification Button */}
             {/* <Button
