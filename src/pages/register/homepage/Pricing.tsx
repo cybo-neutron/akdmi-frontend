@@ -55,12 +55,12 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="py-20 px-4 max-w-6xl mx-auto flex flex-col items-center">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold mb-4 tracking-tight">
+    <div className="pt-24 px-4 sm:px-6 max-w-5xl mx-auto pb-16 flex flex-col items-center">
+      <div className="text-center mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
           Simple, Transparent Pricing
         </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">
+        <p className="text-muted-foreground max-w-2xl">
           Choose the plan that's right for your business. No hidden fees, cancel
           anytime.
         </p>
@@ -70,7 +70,11 @@ const Pricing = () => {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`relative flex flex-col ${plan.popular ? "border-primary shadow-xl scale-105 z-10" : "border-border"}`}
+            className={`relative flex flex-col ${
+            plan.popular
+              ? "border-primary ring-2 ring-primary/30 shadow-xl"
+              : "border-border"
+          }`}
           >
             {plan.popular && (
               <div className="absolute top-0 right-0 p-2 transform translate-y-[-50%] translate-x-[-10%]">

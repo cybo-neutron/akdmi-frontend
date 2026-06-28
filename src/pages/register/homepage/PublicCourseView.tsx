@@ -166,7 +166,7 @@ export default function PublicCourseView() {
   };
 
   return (
-    <div className=" px-4 mt-20 space-y-8 animate-in fade-in duration-500">
+    <div className="px-8 sm:px-6 pt-24 pb-16  space-y-8 animate-in fade-in duration-500">
       {/* ── Title & Meta badges ── */}
       <div className="space-y-4">
         <h1 className="text-3xl font-black uppercase tracking-tight leading-tight">

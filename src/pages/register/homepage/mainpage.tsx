@@ -273,9 +273,9 @@ function FooterSection() {
     <footer className="border-t border-border bg-muted/20 px-8 md:px-16 pt-16 pb-8">
       <div className="max-w-6xl mx-auto">
         {/* Top row */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-10 mb-12">
           {/* Brand */}
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Rocket className="w-4 h-4 text-primary-foreground" />
@@ -351,19 +351,19 @@ const MainPage = () => {
     <div className="flex flex-col bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20">
-        <div className="relative z-10 w-full flex gap-8 p-8 md:p-16">
-          {/* Left: Text Content */}
-          <div className="space-y-6 text-left max-w-lg">
+        <div className="relative z-10 w-full flex gap-8 px-6 py-10 md:p-16">
+          {/* Text Content */}
+          <div className="space-y-6 text-left w-full md:max-w-lg">
             <Badge
               variant="outline"
               className="px-4 py-1 border-primary/20 bg-primary/5 text-primary uppercase tracking-wider text-xs font-semibold"
             >
               Interactive Online Academy
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight uppercase">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight uppercase">
               Learn From Vetted Mentors and Industry Experts
             </h1>
-            <p className="text-muted-foreground text-md leading-relaxed">
+            <p className="text-muted-foreground text-sm md:text-md leading-relaxed">
               A unified platform offering structured text and video courses. Sign up as a student, enroll in courses, track your progress, and elevate your skills.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
@@ -385,10 +385,11 @@ const MainPage = () => {
             </div>
           </div>
 
+          {/* Hero image — only visible on large screens */}
           <img
             src={heroImage}
             alt="Course Platform Live Dashboard Mockup"
-            className="absolute -right-[130px] -bottom-[20px] h-auto w-[700px] group-hover:scale-105 transition-transform duration-500"
+            className="hidden lg:block absolute -right-[130px] -bottom-[20px] h-auto w-[700px] transition-transform duration-500"
           />
         </div>
       </section>

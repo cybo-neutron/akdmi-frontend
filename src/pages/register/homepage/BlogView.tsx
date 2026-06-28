@@ -81,7 +81,7 @@ const BlogView = () => {
     author.email;
 
   return (
-    <article className="py-2 px-16 w-full mx-auto animate-in fade-in duration-700">
+    <article className="py-8 px-4 sm:px-8 md:px-8 animate-in fade-in duration-700">
       {/* Back */}
       <Link to="/blogs">
         <Button

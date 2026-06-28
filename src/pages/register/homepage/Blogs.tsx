@@ -47,16 +47,16 @@ const Blogs = () => {
   const blogs = paginatedData?.blogs ?? [];
 
   return (
-    <div className="pt-20 px-4">
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+    <div className="pt-24 px-4 sm:px-6 pb-16">
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
         <div className="max-w-2xl">
           <Badge variant="outline" className="mb-4 text-primary">
             Academy Insights
           </Badge>
-          <h1 className="text-4xl font-bold mb-4 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
             Our Latest Insights
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground">
             Tips, trends, and tutorials to help you build a successful online
             course business.
           </p>
