@@ -134,7 +134,7 @@ const Users = () => {
     <>
       <div className="flex flex-col gap-8 animate-in fade-in duration-700">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-4xl font-light tracking-tight text-foreground transition-all">
               users
@@ -171,11 +171,11 @@ const Users = () => {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-border/50">
-                  <TableHead className="w-[300px] font-medium pl-8">
+                  <TableHead className="w-[200px] font-medium pl-8">
                     name
                   </TableHead>
-                  <TableHead className="font-medium">email</TableHead>
-                  <TableHead className="font-medium">role</TableHead>
+                  <TableHead className="font-medium hidden sm:table-cell">email</TableHead>
+                  <TableHead className="font-medium hidden sm:table-cell">role</TableHead>
                   <TableHead className="text-right font-medium">
                     action
                   </TableHead>
@@ -185,19 +185,19 @@ const Users = () => {
                 {isLoading ? (
                   Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
                     <TableRow key={i} className="border-border/50">
-                      <TableCell className=" pl-8">
-                        <div className="flex items-center gap-4">
-                          <Skeleton className="h-10 w-10 rounded-full" />
-                          <Skeleton className="h-4 w-32" />
+                      <TableCell className="pl-4 sm:pl-8">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                          <Skeleton className="h-4 w-24" />
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Skeleton className="h-4 w-48" />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Skeleton className="h-6 w-20 rounded-full" />
                       </TableCell>
-                      <TableCell className=" pr-8 text-right">
+                      <TableCell className="pr-4 sm:pr-8 text-right">
                         <Skeleton className="h-8 w-8 rounded-full ml-auto" />
                       </TableCell>
                     </TableRow>
@@ -208,10 +208,10 @@ const Users = () => {
                       key={user.id}
                       className="group border-border/50 hover:bg-primary/2 transition-colors"
                     >
-                      <TableCell className="pl-8">
-                        <div className="flex items-center gap-4">
-                          <div className="relative">
-                            <Avatar className="h-10 w-10 border-2 border-background transition-transform group-hover:scale-110">
+                      <TableCell className="pl-4 sm:pl-8">
+                        <div className="flex items-center gap-3">
+                          <div className="relative shrink-0">
+                            <Avatar className="h-9 w-9 border-2 border-background transition-transform group-hover:scale-110">
                               <AvatarImage src={user.avatarUrl} />
                               <AvatarFallback className="bg-primary/5 text-primary text-xs">
                                 {user.firstName?.[0]}
@@ -220,18 +220,18 @@ const Users = () => {
                             </Avatar>
                             <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 border-2 border-background" />
                           </div>
-                          <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                          <span className="font-medium text-foreground group-hover:text-primary transition-colors text-sm">
                             {user.firstName} {user.lastName}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground py-5">
+                      <TableCell className="text-muted-foreground py-5 hidden sm:table-cell">
                         <div className="flex items-center gap-2">
                           <Mail className="h-3.5 w-3.5 opacity-50" />
                           {user.email}
                         </div>
                       </TableCell>
-                      <TableCell className="py-5">
+                      <TableCell className="py-5 hidden sm:table-cell">
                         <Badge
                           variant="outline"
                           className={`
@@ -249,7 +249,7 @@ const Users = () => {
                           {user.role}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right py-5 pr-8">
+                      <TableCell className="text-right py-5 pr-4 sm:pr-8">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -314,7 +314,7 @@ const Users = () => {
 
           {/* Pagination Footer */}
           {!isLoading && totalUsers > 0 && (
-            <div className="flex items-center justify-between px-8 py-6 border-t border-border/50 bg-muted/10 rounded-b-3xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-8 py-4 sm:py-6 gap-3 border-t border-border/50 bg-muted/10 rounded-b-3xl">
               <p className="text-sm text-muted-foreground font-light">
                 Showing{" "}
                 <span className="font-medium text-foreground">

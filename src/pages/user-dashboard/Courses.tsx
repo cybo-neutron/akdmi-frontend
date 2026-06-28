@@ -30,15 +30,15 @@ const Courses = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">All Courses</h1>
-          <p className="text-muted-foreground">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">All Courses</h1>
+          <p className="text-muted-foreground text-sm">
             Manage and view all your enrolled and created courses.
           </p>
         </div>
 
-        <div>{canCreate && <AddCourseDialog />}</div>
+        <div className="shrink-0">{canCreate && <AddCourseDialog />}</div>
       </div>
 
       <CourseList canEdit={canEdit} canDelete={canDelete} />

@@ -7,7 +7,7 @@ const UserSettings = () => {
       <p className="text-muted-foreground">
         Manage your account settings and preferences.
       </p>
-      <div className="mt-6 border rounded-xl p-8 bg-card">
+      <div className="mt-6 border rounded-xl p-4 sm:p-8 bg-card">
         <div className="space-y-6">
           <div className="space-y-2">
             <h3 className="text-lg font-medium">Profile</h3>

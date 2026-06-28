@@ -257,7 +257,7 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
     <>
       <div className="flex flex-col gap-6">
         {/* Back + Add Enrollment */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <Button
             variant="ghost"
             onClick={handleBack}
@@ -269,10 +269,10 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
 
           <Button
             onClick={() => setAddOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-105 active:scale-95 group"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-105 active:scale-95 group w-full sm:w-auto"
           >
             <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
-            Add new enrollment
+            Add enrollment
           </Button>
         </div>
 
@@ -282,12 +282,12 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-border/50">
-                  <TableHead className="font-medium pl-8 w-[300px]">
+                  <TableHead className="font-medium pl-4 sm:pl-8 w-[180px]">
                     user name
                   </TableHead>
-                  <TableHead className="font-medium">user email</TableHead>
-                  <TableHead className="font-medium">user role</TableHead>
-                  <TableHead className="text-right font-medium pr-8">
+                  <TableHead className="font-medium hidden sm:table-cell">user email</TableHead>
+                  <TableHead className="font-medium hidden sm:table-cell">user role</TableHead>
+                  <TableHead className="text-right font-medium pr-4 sm:pr-8">
                     actions
                   </TableHead>
                 </TableRow>
@@ -296,19 +296,19 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
                 {isLoading ? (
                   Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
                     <TableRow key={i} className="border-border/50">
-                      <TableCell className="pl-8">
-                        <div className="flex items-center gap-4">
-                          <Skeleton className="h-10 w-10 rounded-full" />
-                          <Skeleton className="h-4 w-32" />
+                      <TableCell className="pl-4 sm:pl-8">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                          <Skeleton className="h-4 w-24" />
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Skeleton className="h-4 w-48" />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Skeleton className="h-6 w-20 rounded-full" />
                       </TableCell>
-                      <TableCell className="pr-8 text-right">
+                      <TableCell className="pr-4 sm:pr-8 text-right">
                         <Skeleton className="h-8 w-8 rounded-full ml-auto" />
                       </TableCell>
                     </TableRow>
@@ -319,9 +319,9 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
                       key={enrolled.enrollment.id}
                       className="group border-border/50 hover:bg-primary/2 transition-colors"
                     >
-                      <TableCell className="pl-8">
-                        <div className="flex items-center gap-4">
-                          <div className="relative">
+                      <TableCell className="pl-4 sm:pl-8">
+                        <div className="flex items-center gap-3">
+                          <div className="relative shrink-0">
                             <Avatar className="h-10 w-10 border-2 border-background transition-transform group-hover:scale-110">
                               <AvatarImage
                                 src={enrolled.user.avatarUrl ?? undefined}
@@ -332,20 +332,20 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
                               </AvatarFallback>
                             </Avatar>
                           </div>
-                          <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                          <span className="font-medium text-foreground group-hover:text-primary transition-colors text-sm">
                             {[enrolled.user.firstName, enrolled.user.lastName]
                               .filter(Boolean)
                               .join(" ") || "—"}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-muted-foreground hidden sm:table-cell">
                         <div className="flex items-center gap-2">
                           <Mail className="h-3.5 w-3.5 opacity-50" />
                           {enrolled.user.email}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Badge
                           variant="outline"
                           className={`
@@ -363,7 +363,7 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
                           {enrolled.user.role}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right pr-8">
+                      <TableCell className="text-right pr-4 sm:pr-8">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -414,7 +414,7 @@ function EnrolledUsersView({ courseId }: { courseId: number }) {
 
           {/* Pagination Footer */}
           {!isLoading && totalUsers > 0 && (
-            <div className="flex items-center justify-between px-8 py-6 border-t border-border/50 bg-muted/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-8 py-4 sm:py-6 gap-3 border-t border-border/50 bg-muted/10">
               <p className="text-sm text-muted-foreground font-light">
                 Showing{" "}
                 <span className="font-medium text-foreground">

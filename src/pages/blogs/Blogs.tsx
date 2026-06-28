@@ -189,18 +189,18 @@ const Blogs = () => {
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-light tracking-tight text-foreground">
+          <h1 className="text-3xl font-light tracking-tight text-foreground">
             Blogs
           </h1>
-          <p className="text-muted-foreground font-light">
+          <p className="text-muted-foreground font-light text-sm">
             Manage and view all blog posts.
           </p>
         </div>
         <Button
           onClick={handleCreate}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-105 active:scale-95 group"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-105 active:scale-95 group w-full sm:w-auto"
         >
           <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
           Create Blog
@@ -208,7 +208,7 @@ const Blogs = () => {
       </div>
 
       {/* Search */}
-      <div className="relative max-w-sm">
+      <div className="relative w-full sm:max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search blogs..."
@@ -358,7 +358,7 @@ const Blogs = () => {
 
       {/* Pagination Footer */}
       {!isLoading && totalBlogs > 0 && totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground font-light">
             Showing{" "}
             <span className="font-medium text-foreground">

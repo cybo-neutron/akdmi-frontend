@@ -18,7 +18,7 @@ const UserDashboardHome = () => {
     <div className="flex flex-col gap-8 animate-in fade-in duration-700">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-4xl font-light tracking-tight text-foreground">
+        <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-foreground">
           Dashboard
         </h1>
       </div>
@@ -61,7 +61,7 @@ const UserDashboardHome = () => {
                     <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center transition-colors group-hover:bg-primary/20">
                       <BookOpen className="h-5 w-5 text-primary" />
                     </div>
-                    <span className="text-xs font-medium text-foreground text-center line-clamp-2 leading-tight">
+                    <span className="text-xs font-medium text-foreground text-center line-clamp-2 leading-tight px-1">
                       {item.course.title}
                     </span>
                   </div>

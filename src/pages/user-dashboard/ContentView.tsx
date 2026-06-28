@@ -385,7 +385,7 @@ export default function ContentView() {
   }
 
   return (
-    <div className={cn("h-full flex flex-col transition-[padding-right] duration-300 ease-in-out", sidebarOpen && "pr-80")}>
+    <div className={`h-full flex flex-col transition-[padding-right] duration-300 ease-in-out ${sidebarOpen ? "lg:pr-80" : ""}`}>
       {/* Header */}
       <div className="">
         <div className="flex items-start justify-between">
