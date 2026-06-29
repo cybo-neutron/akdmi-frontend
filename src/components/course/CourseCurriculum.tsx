@@ -28,6 +28,7 @@ import {
   GripVertical,
   Plus,
   CheckCircle2,
+  ImagePlay,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Content } from "@/services/content.service";
@@ -60,7 +61,7 @@ interface CourseCurriculumProps {
 function TopicIcon({ type }: { type: string }) {
   switch (type) {
     case "media":
-      return <Video className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />;
+      return <ImagePlay className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />;
     case "document":
       return <FileIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />;
     default:

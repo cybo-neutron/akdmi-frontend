@@ -18,7 +18,7 @@ import {
   updateCourse,
   getCourseMediaPresignedUrl,
 } from "@/services/course.service";
-import { uploadFileWithPreSignedUrl } from "@/services/file.service";
+import { getPreSignedUrl, uploadFileWithPreSignedUrl } from "@/services/file.service";
 import {
   Plus,
   Loader2,
@@ -28,6 +28,8 @@ import {
 import { useState, useEffect, useCallback } from "react";
 import { capitalize } from "@/lib/capitalize";
 import { MediaUploadField } from "./MediaUploadFile";
+import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -80,6 +82,10 @@ export function CourseDialog({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  // ── Upload progress states ──
+  const [coverArtProgress, setCoverArtProgress] = useState(0);
+  const [introVideoProgress, setIntroVideoProgress] = useState(0);
+
   // ── Cleanup object URLs on unmount ──
   useEffect(() => {
     return () => {
@@ -128,8 +134,11 @@ export function CourseDialog({
   });
 
   const updateCourseMutation = useMutation({
-    mutationFn: (data: CourseFormData & { coverArt?: string; introductionVideo?: string }) =>
-      updateCourse({ id: course!.id, ...data }),
+    mutationFn: (data: CourseFormData & { coverArt?: string; introductionVideo?: string }) => {
+      console.log(data)
+      return updateCourse({ id: course!.id, ...data })
+
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       setOpen(false);
@@ -139,19 +148,39 @@ export function CourseDialog({
   const mutation = mode === "edit" ? updateCourseMutation : createCourseMutation;
 
   // ── Upload helper ──
-  async function uploadIfSelected(
+  const uploadIfSelected = useCallback(async (
     file: File | null,
     category: "cover_art" | "introduction_video",
-  ): Promise<string | undefined> {
+  ): Promise<string | undefined> => {
     if (!file) return undefined;
-    const { signedUrl, objectKey, bucketName } = await getCourseMediaPresignedUrl({
-      fileName: file.name,
+    const extension = file.name.split(".").pop();
+    const objectKey = category === 'cover_art'
+      ? `public/course-cover-art/${course?.id || 'new'}_${Date.now()}.${extension}`
+      : `public/course-intro-video/${course?.id || 'new'}_${Date.now()}.${extension}`;
+
+    const { signedUrl } = await getPreSignedUrl({
+      bucketName: 'akdmi-content',
+      objectKey: objectKey,
       contentType: file.type,
-      category,
     });
-    await uploadFileWithPreSignedUrl(signedUrl, file);
-    return `${bucketName}::${objectKey}`;
-  }
+
+    if (!signedUrl) {
+      toast.error("Failed to get presigned URL");
+      return;
+    }
+
+    const setProgress = category === 'cover_art' ? setCoverArtProgress : setIntroVideoProgress;
+    setProgress(0);
+
+    await uploadFileWithPreSignedUrl(signedUrl, file, (progressEvent) => {
+      if (progressEvent.total) {
+        const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setProgress(percent);
+      }
+    });
+
+    return signedUrl.split('?')[0];
+  }, [course?.id]);
 
   // ── Submit ──
   const onSubmit = async (data: CourseFormData) => {
@@ -163,6 +192,7 @@ export function CourseDialog({
         uploadIfSelected(introVideoFile, "introduction_video"),
       ]);
       setIsUploading(false);
+      console.log({ coverArtUrl })
 
       mutation.mutate({
         ...data,
@@ -182,6 +212,8 @@ export function CourseDialog({
     setCoverArtPreview(null);
     setIntroVideoFile(null);
     setUploadError(null);
+    setCoverArtProgress(0);
+    setIntroVideoProgress(0);
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -273,6 +305,15 @@ export function CourseDialog({
             existingUrl={course?.coverArt}
             onFileChange={handleCoverArtChange}
           />
+          {isUploading && coverArtProgress > 0 && coverArtProgress < 100 && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Uploading cover art...</span>
+                <span>{coverArtProgress}%</span>
+              </div>
+              <Progress value={coverArtProgress} className="h-1" />
+            </div>
+          )}
 
           {/* Introduction Video */}
           <MediaUploadField
@@ -286,6 +327,15 @@ export function CourseDialog({
             existingUrl={course?.introductionVideo}
             onFileChange={handleIntroVideoChange}
           />
+          {isUploading && introVideoProgress > 0 && introVideoProgress < 100 && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Uploading video...</span>
+                <span>{introVideoProgress}%</span>
+              </div>
+              <Progress value={introVideoProgress} className="h-1" />
+            </div>
+          )}
 
           {/* Errors */}
           {uploadError && (

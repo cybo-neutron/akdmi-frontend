@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, FileIcon, FileText, Video, X, CheckCircle2 } from "lucide-react";
+import { ChevronDown, ChevronUp, FileIcon, FileText, Video, X, CheckCircle2, ImagePlay } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { type Content, type Chapter } from "@/services/content.service";
@@ -10,7 +10,7 @@ function getContentIcon(type: string) {
     case "text":
       return <FileText className="h-4 w-4" />;
     case "media":
-      return <Video className="h-4 w-4" />;
+      return <ImagePlay  className="h-4 w-4" />;
     case "document":
       return <FileIcon className="h-4 w-4" />;
     default:

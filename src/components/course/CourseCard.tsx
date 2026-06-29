@@ -55,9 +55,16 @@ export function CourseCard({
   return (
     <>
       <Card className="group hover:ring-foreground/20 transition-all duration-200 p-0">
-        {/* Placeholder Image */}
         <div className="relative aspect-video bg-linear-to-br from-primary/20 via-primary/10 to-muted flex items-center justify-center overflow-hidden">
-          <BookOpen className="size-12 text-primary/40" />
+          {course.coverArt ? (
+            <img
+              src={course.coverArt}
+              alt={course.title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <BookOpen className="size-12 text-primary/40" />
+          )}
           <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
 
