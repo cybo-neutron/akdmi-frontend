@@ -129,8 +129,8 @@ export default function UserDashboardLayout() {
         collapsible="icon"
         className="border-r border-sidebar-border bg-sidebar animate-in slide-in-from-left duration-300"
       >
-        <SidebarHeader className="h-16 flex w-full px-4 border-b border-sidebar-border">
-          <Link to="/" className="flex  justify-start gap-3 items-center group">
+        <SidebarHeader className="flex w-full justify-center  px-2 border-b border-sidebar-border">
+          <Link to="/" className="flex w-full justify-start gap-3 items-center group ">
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
               <Rocket />
             </div>
@@ -182,25 +182,27 @@ export default function UserDashboardLayout() {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter className="p-4 border-t border-sidebar-border">
-          <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center">
-            <Avatar className="size-8 ring-2 ring-primary/10">
-              <AvatarImage
-                src={userDetails?.avatarUrl || ""}
-                alt={userDetails?.firstName || ""}
-              />
-              <AvatarFallback className="bg-primary/5 text-primary">
-                {userDetails?.firstName?.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
-              <span className="text-sm font-medium leading-none text-sidebar-foreground truncate max-w-[120px]">
-                {userDetails?.firstName}
-              </span>
-              <span className="text-xs text-muted-foreground truncate max-w-[120px]">
-                {userDetails?.email}
-              </span>
+          <Link to={'/dashboard/profile'}>
+            <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center">
+              <Avatar className="size-8 ring-2 ring-primary/10">
+                <AvatarImage
+                  src={userDetails?.avatarUrl || ""}
+                  alt={userDetails?.firstName || ""}
+                />
+                <AvatarFallback className="bg-primary/5 text-primary">
+                  {userDetails?.firstName?.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
+                <span className="text-sm font-medium leading-none text-sidebar-foreground truncate max-w-[120px]">
+                  {userDetails?.firstName}
+                </span>
+                <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                  {userDetails?.email}
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
         </SidebarFooter>
       </Sidebar>
 
@@ -296,15 +298,15 @@ export default function UserDashboardLayout() {
                     </div>
                   ),
                 },
-                {
-                  onClickAction: () => console.log("Settings"),
-                  Component: (
-                    <div className="flex items-center gap-2 group/item">
-                      <Settings className="size-4 text-muted-foreground group-hover/item:text-primary" />
-                      <span>Settings</span>
-                    </div>
-                  ),
-                },
+                // {
+                //   onClickAction: () => console.log("Settings"),
+                //   Component: (
+                //     <div className="flex items-center gap-2 group/item">
+                //       <Settings className="size-4 text-muted-foreground group-hover/item:text-primary" />
+                //       <span>Settings</span>
+                //     </div>
+                //   ),
+                // },
                 {
                   onClickAction: () => logOut(),
                   Component: (
