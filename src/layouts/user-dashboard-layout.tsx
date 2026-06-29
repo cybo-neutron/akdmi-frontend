@@ -93,17 +93,17 @@ const data = {
       isActive: true,
       allowedUsers: [UserRole.ADMIN, UserRole.MANAGER],
     },
-    {
-      title: "Settings",
-      url: "/dashboard/settings",
-      icon: Settings,
-      allowedUsers: [
-        UserRole.ADMIN,
-        UserRole.MENTOR,
-        UserRole.STUDENT,
-        UserRole.MANAGER,
-      ],
-    },
+    // {
+    //   title: "Settings",
+    //   url: "/dashboard/settings",
+    //   icon: Settings,
+    //   allowedUsers: [
+    //     UserRole.ADMIN,
+    //     UserRole.MENTOR,
+    //     UserRole.STUDENT,
+    //     UserRole.MANAGER,
+    //   ],
+    // },
   ],
 };
 
@@ -132,14 +132,10 @@ export default function UserDashboardLayout() {
         <SidebarHeader className="h-16 flex w-full px-4 border-b border-sidebar-border">
           <Link to="/" className="flex  justify-start gap-3 items-center group">
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
-              {/* <Command className="size-5" /> */}
               <Rocket />
             </div>
             <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
               <span className="font-semibold text-sidebar-foreground">AKDMI</span>
-              {/* <span className="text-[10px] text-muted-foreground">
-                Improvement Coaching Institute
-              </span> */}
             </div>
           </Link>
         </SidebarHeader>
@@ -290,7 +286,9 @@ export default function UserDashboardLayout() {
               }
               menuItems={[
                 {
-                  onClickAction: () => console.log("Profile"),
+                  onClickAction: () => {
+                    navigate('/dashboard/profile')
+                  },
                   Component: (
                     <div className="flex items-center gap-2 group/item">
                       <User className="size-4 text-muted-foreground group-hover/item:text-primary" />

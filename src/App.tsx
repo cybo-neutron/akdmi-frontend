@@ -20,6 +20,7 @@ import Users from "./pages/users/Users";
 import Enrollments from "./pages/enrollments/Enrollments";
 import DashboardBlogs from "./pages/blogs/Blogs";
 import { Toaster } from "@/components/ui/sonner";
+import Profile from "./pages/profile";
 
 export function App() {
   return (
@@ -51,6 +52,7 @@ export function App() {
             <Route path="users" element={<Users />} />
             <Route path="enrollments" element={<Enrollments />} />
             <Route path="blogs" element={<DashboardBlogs />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
         </Route>
       </Routes>

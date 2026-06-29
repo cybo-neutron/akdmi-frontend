@@ -43,8 +43,9 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
       return false;
     }
     const response = await verifyAccessToken();
-    if (response?.payload) {
-      const { userId, role, email, firstName, lastName } = response.payload;
+    const data = response?.payload || response;
+    if (data) {
+      const { userId, role, email, firstName, lastName, avatarUrl } = data;
       if (!userId) {
         return false;
       }
@@ -56,7 +57,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
           role,
           firstName,
           lastName,
-          avatarUrl: undefined,
+          avatarUrl: avatarUrl || undefined,
         },
       }));
       return true;
@@ -67,7 +68,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
   logIn: async ({ email, password }: LoginUserType) => {
     const response = await loginUser({ email, password });
 
-    const { userId, role, firstName, lastName, token } = response;
+    const { userId, role, firstName, lastName, avatarUrl, token } = response;
     if (!userId) {
       return;
     }
@@ -79,7 +80,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
         role,
         firstName,
         lastName,
-        avatarUrl: undefined,
+        avatarUrl: avatarUrl || undefined,
       },
     }));
     setAccessTokenLocalStorage(token as string);
@@ -114,7 +115,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
   },
 
   setUserDetails: (details: UserDetailsType) => {
-    const { userId, email, role, firstName, lastName } = details;
+    const { userId, email, role, firstName, lastName, avatarUrl } = details;
     set(() => ({
       userDetails: {
         userId,
@@ -122,7 +123,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
         role,
         firstName,
         lastName,
-        avatarUrl: undefined,
+        avatarUrl: avatarUrl || undefined,
       },
       isUserLoggedIn: true,
     }));
@@ -142,7 +143,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
     const response = await verifyAccessToken();
 
     if (response) {
-      const { userId, role, email, firstName, lastName } = response;
+      const { userId, role, email, firstName, lastName, avatarUrl } = response;
       if (!userId) {
         return false;
       }
@@ -154,7 +155,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
           role,
           firstName,
           lastName,
-          avatarUrl: undefined,
+          avatarUrl: avatarUrl || undefined,
         },
       }));
       return true;

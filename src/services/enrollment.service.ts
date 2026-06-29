@@ -83,6 +83,7 @@ export interface MyEnrollment {
     id: number;
     title: string;
     description: string;
+    coverArt: string | null;
     isActive: boolean;
     createdBy: number;
     lastUpdatedBy: number;

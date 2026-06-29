@@ -1,5 +1,5 @@
 import { axiosInterceptor } from "@/lib/axiosInterceptor";
-import { getPreSignedUrl, uploadFileWithPreSignedUrl } from "./file.service";
+import { uploadFileWithPreSignedUrl } from "./file.service";
 
 // ─── Type-Specific Data Interfaces ──────────────────────────────────
 

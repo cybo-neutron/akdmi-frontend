@@ -45,23 +45,23 @@ export async function uploadFileWithPreSignedUrl(
   file: any,
   onProgress?: (progressEvent: any) => void,
 ) {
-  //   const response = await axios.request({
-  //     method: "PUT",
-  //     url: preSignedUrl,
-  //     headers: {
-  //       "Content-Type": file.type,
-  //     },
-  //     data: file,
-  //     ...(onProgress && { onUploadProgress: onProgress }),
-  //   });
-  const response = await fetch(preSignedUrl, {
+  const response = await axios.request({
     method: "PUT",
+    url: preSignedUrl,
     headers: {
       "Content-Type": file.type,
     },
-    body: file,
-    // ...(onProgress && { onUploadProgress: onProgress }),
+    data: file,
+    ...(onProgress && { onUploadProgress: onProgress }),
   });
+  // const response = await fetch(preSignedUrl, {
+  //   method: "PUT",
+  //   headers: {
+  //     "Content-Type": file.type,
+  //   },
+  //   body: file,
+  //   ...(onProgress && { onUploadProgress: onProgress }),
+  // });
 
   return response;
 }

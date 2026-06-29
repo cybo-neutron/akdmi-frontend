@@ -40,8 +40,8 @@ const UserDashboardHome = () => {
         {/* Course Cards Container */}
         <div className="border border-border/50 bg-card/30 backdrop-blur-sm rounded-lg p-6">
           {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-square rounded-lg" />
               ))}
             </div>
@@ -50,20 +50,32 @@ const UserDashboardHome = () => {
               Failed to load your courses.
             </div>
           ) : enrollments && enrollments.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {enrollments.map((item) => (
                 <Link
                   key={item.enrollment.id}
                   to={`/dashboard/courses/${item.course.id}`}
                   className="group relative"
                 >
-                  <div className="aspect-square rounded-lg border border-border/50 bg-muted/30 flex flex-col items-center justify-center gap-3 p-4 transition-all group-hover:border-primary/50 group-hover:bg-primary/5 group-hover:scale-105 group-hover:shadow-lg active:scale-95">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center transition-colors group-hover:bg-primary/20">
-                      <BookOpen className="h-5 w-5 text-primary" />
+                  <div className="aspect-square rounded-lg border border-border/50 bg-card overflow-hidden flex flex-col transition-all group-hover:border-primary/50 group-hover:scale-105 group-hover:shadow-lg active:scale-95">
+                    <div className="flex-1 w-full relative bg-muted flex items-center justify-center overflow-hidden">
+                      {item.course.coverArt ? (
+                        <img
+                          src={item.course.coverArt}
+                          alt={item.course.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                          <BookOpen className="h-6 w-6" />
+                        </div>
+                      )}
                     </div>
-                    <span className="text-xs font-medium text-foreground text-center line-clamp-2 leading-tight px-1">
-                      {item.course.title}
-                    </span>
+                    <div className="p-4 border-t border-border/50 bg-card">
+                      <span className="text-sm font-semibold text-foreground line-clamp-2 leading-tight text-center block">
+                        {item.course.title}
+                      </span>
+                    </div>
                   </div>
                 </Link>
               ))}
