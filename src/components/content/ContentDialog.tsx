@@ -23,7 +23,7 @@ import { useEffect } from "react";
 
 interface ContentFormData {
   title: string;
-  description: string;
+  description?: string;
   type: "text" | "media" | "document";
 }
 
@@ -113,7 +113,7 @@ export function ContentDialog({
     if (mode === "create") {
       const createData: CreateContentData = {
         title: data.title,
-        description: data.description,
+        description: data?.description || "",
         type: isChapter ? "text" : data.type,
         courseId,
         parentId: parentId || null,
@@ -191,9 +191,7 @@ export function ContentDialog({
               placeholder={`Enter ${entityLabel.toLowerCase()} description`}
               aria-invalid={!!errors.description}
               rows={3}
-              {...register("description", {
-                required: "Description is required",
-              })}
+              {...register("description")}
             />
             {errors.description && (
               <FieldError>{errors.description.message}</FieldError>
