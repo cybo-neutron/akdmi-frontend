@@ -515,13 +515,6 @@ export default function ContentView() {
         completedTopicIds={completedTopicIds}
       />
 
-      {/* Overlay when sidebar is open */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/20 z-40"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
 
       {/* Add Chapter Dialog */}
       <ContentDialog

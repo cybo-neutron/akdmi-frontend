@@ -124,132 +124,133 @@ export default function UserDashboardLayout() {
   }, [isUserLoggedIn]);
 
   return (
-    <SidebarProvider>
-      <Sidebar
-        collapsible="icon"
-        className="border-r border-sidebar-border bg-sidebar animate-in slide-in-from-left duration-300"
-      >
-        <SidebarHeader className="flex w-full justify-center  px-2 border-b border-sidebar-border">
-          <Link to="/" className="flex w-full justify-start gap-3 items-center group ">
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
-              <Rocket />
-            </div>
-            <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
-              <span className="font-semibold text-sidebar-foreground">AKDMI</span>
-            </div>
-          </Link>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-4 mb-2">
-              Platform
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {data.navMain
-                  .filter((item) =>
-                    item.allowedUsers.includes(
-                      userDetails?.role as UserRoleType,
-                    ),
-                  )
-                  .map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={location.pathname === item.url}
-                        className="transition-all hover:bg-sidebar-accent group"
-                      >
-                        <Link to={item.url} className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "p-1 rounded-md transition-colors",
-                              location.pathname === item.url
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground group-hover:text-primary",
-                            )}
-                          >
-                            <item.icon size={16} />
-                          </div>
-                          <span className="font-medium group-data-[collapsible=icon]:hidden">
-                            {item.title}
-                          </span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter className="p-4 border-t border-sidebar-border">
-          <Link to={'/dashboard/profile'}>
-            <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center">
-              <Avatar className="size-8 ring-2 ring-primary/10">
-                <AvatarImage
-                  src={userDetails?.avatarUrl || ""}
-                  alt={userDetails?.firstName || ""}
-                />
-                <AvatarFallback className="bg-primary/5 text-primary">
-                  {userDetails?.firstName?.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
-                <span className="text-sm font-medium leading-none text-sidebar-foreground truncate max-w-[120px]">
-                  {userDetails?.firstName}
-                </span>
-                <span className="text-xs text-muted-foreground truncate max-w-[120px]">
-                  {userDetails?.email}
-                </span>
+    <div className="bg-linear-to-tl from-primary/10 to-background ">
+      <SidebarProvider>
+        <Sidebar
+          collapsible="icon"
+          className="border-r border-sidebar-border bg-transparent animate-in slide-in-from-left duration-300"
+        >
+          <SidebarHeader className="flex w-full justify-center h-16 px-4 group-data-[collapsible=icon]:px-2 border-b border-sidebar-border">
+            <Link to="/" className="flex w-full justify-start gap-3 items-center group ">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
+                <Rocket />
               </div>
-            </div>
-          </Link>
-        </SidebarFooter>
-      </Sidebar>
-
-      <SidebarInset className="bg-background">
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-6 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger className="-ml-1 hover:bg-muted" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink asChild>
-                    <Link
-                      to="/dashboard"
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      Dashboard
-                    </Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {pathSegments.slice(1).map((segment, index) => (
-                  <Fragment key={segment}>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      {index === pathSegments.length - 2 ? (
-                        <BreadcrumbPage className="font-semibold text-foreground capitalize">
-                          {segment}
-                        </BreadcrumbPage>
-                      ) : (
-                        <BreadcrumbLink asChild>
-                          <Link
-                            to={`/${pathSegments.slice(0, index + 2).join("/")}`}
-                            className="text-muted-foreground hover:text-primary transition-colors capitalize"
-                          >
-                            {segment}
+              <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
+                <span className="font-semibold text-sidebar-foreground">AKDMI</span>
+              </div>
+            </Link>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-4 mb-2">
+                Platform
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {data.navMain
+                    .filter((item) =>
+                      item.allowedUsers.includes(
+                        userDetails?.role as UserRoleType,
+                      ),
+                    )
+                    .map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={location.pathname === item.url}
+                          className="transition-all hover:bg-sidebar-accent group"
+                        >
+                          <Link to={item.url} className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                "p-1 rounded-md transition-colors",
+                                location.pathname === item.url
+                                  ? "bg-primary text-primary-foreground"
+                                  : "text-muted-foreground group-hover:text-primary",
+                              )}
+                            >
+                              <item.icon size={16} />
+                            </div>
+                            <span className="font-medium group-data-[collapsible=icon]:hidden">
+                              {item.title}
+                            </span>
                           </Link>
-                        </BreadcrumbLink>
-                      )}
-                    </BreadcrumbItem>
-                  </Fragment>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter className="p-4 border-t border-sidebar-border">
+            <Link to={'/dashboard/profile'}>
+              <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center">
+                <Avatar className="size-8 ring-2 ring-primary/10">
+                  <AvatarImage
+                    src={userDetails?.avatarUrl || ""}
+                    alt={userDetails?.firstName || ""}
+                  />
+                  <AvatarFallback className="bg-primary/5 text-primary">
+                    {userDetails?.firstName?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
+                  <span className="text-sm font-medium leading-none text-sidebar-foreground truncate max-w-[120px]">
+                    {userDetails?.firstName}
+                  </span>
+                  <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                    {userDetails?.email}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </SidebarFooter>
+        </Sidebar>
 
-          <div className="flex items-center gap-4">
-            {/* <div className="relative hidden lg:block group">
+        <SidebarInset className="bg-transparent">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-6 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="-ml-1 hover:bg-muted" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink asChild>
+                      <Link
+                        to="/dashboard"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        Dashboard
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  {pathSegments.slice(1).map((segment, index) => (
+                    <Fragment key={segment}>
+                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbItem>
+                        {index === pathSegments.length - 2 ? (
+                          <BreadcrumbPage className="font-semibold text-foreground capitalize">
+                            {segment}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink asChild>
+                            <Link
+                              to={`/${pathSegments.slice(0, index + 2).join("/")}`}
+                              className="text-muted-foreground hover:text-primary transition-colors capitalize"
+                            >
+                              {segment}
+                            </Link>
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                    </Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* <div className="relative hidden lg:block group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 placeholder="Search resources..."
@@ -260,8 +261,8 @@ export default function UserDashboardLayout() {
               </div>
             </div> */}
 
-            {/* Notification Button */}
-            {/* <Button
+              {/* Notification Button */}
+              {/* <Button
               variant="ghost"
               size="icon"
               className="relative hover:bg-muted text-muted-foreground"
@@ -270,61 +271,63 @@ export default function UserDashboardLayout() {
               <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-background ring-offset-0" />
             </Button> */}
 
-            <ThemeSelector />
+              <ThemeSelector />
 
-            <CustomDropDown
-              TriggerComponent={
-                <button className="flex items-center gap-2 px-1 py-1 rounded-full hover:bg-muted transition-colors ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <Avatar className="size-8 border-2 border-background shadow-sm">
-                    <AvatarImage
-                      src={userDetails?.avatarUrl || ""}
-                      alt={userDetails?.firstName || ""}
-                    />
-                    <AvatarFallback>
-                      {userDetails?.firstName?.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              }
-              menuItems={[
-                {
-                  onClickAction: () => {
-                    navigate('/dashboard/profile')
+              <CustomDropDown
+                TriggerComponent={
+                  <button className="flex items-center gap-2 px-1 py-1 rounded-full hover:bg-muted transition-colors ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <Avatar className="size-8 border-2 border-background shadow-sm">
+                      <AvatarImage
+                        src={userDetails?.avatarUrl || ""}
+                        alt={userDetails?.firstName || ""}
+                      />
+                      <AvatarFallback>
+                        {userDetails?.firstName?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                }
+                menuItems={[
+                  {
+                    onClickAction: () => {
+                      navigate('/dashboard/profile')
+                    },
+                    Component: (
+                      <div className="flex items-center gap-2 group/item">
+                        <User className="size-4 text-muted-foreground group-hover/item:text-primary" />
+                        <span>Profile</span>
+                      </div>
+                    ),
                   },
-                  Component: (
-                    <div className="flex items-center gap-2 group/item">
-                      <User className="size-4 text-muted-foreground group-hover/item:text-primary" />
-                      <span>Profile</span>
-                    </div>
-                  ),
-                },
-                // {
-                //   onClickAction: () => console.log("Settings"),
-                //   Component: (
-                //     <div className="flex items-center gap-2 group/item">
-                //       <Settings className="size-4 text-muted-foreground group-hover/item:text-primary" />
-                //       <span>Settings</span>
-                //     </div>
-                //   ),
-                // },
-                {
-                  onClickAction: () => logOut(),
-                  Component: (
-                    <div className="flex items-center gap-2 text-destructive group/item">
-                      <LogOut className="size-4 opacity-70 group-hover/item:opacity-100" />
-                      <span>Logout</span>
-                    </div>
-                  ),
-                },
-              ]}
-            />
+                  // {
+                  //   onClickAction: () => console.log("Settings"),
+                  //   Component: (
+                  //     <div className="flex items-center gap-2 group/item">
+                  //       <Settings className="size-4 text-muted-foreground group-hover/item:text-primary" />
+                  //       <span>Settings</span>
+                  //     </div>
+                  //   ),
+                  // },
+                  {
+                    onClickAction: () => logOut(),
+                    Component: (
+                      <div className="flex items-center gap-2 text-destructive group/item">
+                        <LogOut className="size-4 opacity-70 group-hover/item:opacity-100" />
+                        <span>Logout</span>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </div>
+          </header>
+          <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6 md:p-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <Outlet />
           </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6 md:p-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <Outlet />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
+
+    </div>
   );
 }
 

@@ -61,7 +61,7 @@ const SignUp = () => {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Register</CardTitle>
+        <CardTitle className="text-2xl uppercase font-extrabold">Register</CardTitle>
         <CardDescription>
           Enter your email below to register to your account
         </CardDescription>
@@ -124,7 +124,7 @@ const SignUp = () => {
               </button>
             </div>
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full uppercase font-bold">
             Register
           </Button>
         </form>

@@ -44,7 +44,7 @@ export default function Login() {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl uppercase font-extrabold">Login</CardTitle>
         <CardDescription>
           Enter your email below to login to your account
         </CardDescription>
@@ -90,7 +90,7 @@ export default function Login() {
               </button>
             </div>
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full uppercase font-bold">
             Login
           </Button>
         </form>
