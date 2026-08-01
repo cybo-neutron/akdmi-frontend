@@ -24,12 +24,17 @@ import {
   Loader2,
   ImageIcon,
   Video,
+  Globe,
+  EyeOff,
+  Archive,
+  ArchiveRestore,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { capitalize } from "@/lib/capitalize";
 import { MediaUploadField } from "./MediaUploadFile";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,6 +49,7 @@ export interface Course {
   description: string;
   coverArt?: string | null;
   introductionVideo?: string | null;
+  status?: "draft" | "published" | "archived";
   createdAt?: string;
   updatedAt?: string;
 }
@@ -136,12 +142,33 @@ export function CourseDialog({
   const updateCourseMutation = useMutation({
     mutationFn: (data: CourseFormData & { coverArt?: string; introductionVideo?: string }) => {
       console.log(data)
-      return updateCourse({ id: course!.id, ...data })
+      return updateCourse({ id: Number(course!.id), ...data })
 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       setOpen(false);
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: (status: "draft" | "published" | "archived") => {
+      return updateCourse({ id: Number(course!.id), status });
+    },
+    onSuccess: (_, newStatus) => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success(
+        `Course ${
+          newStatus === "published"
+            ? "published"
+            : newStatus === "archived"
+            ? "archived"
+            : "moved to draft"
+        } successfully`
+      );
+    },
+    onError: () => {
+      toast.error("Failed to update course status");
     },
   });
 
@@ -258,6 +285,94 @@ export function CourseDialog({
           <DialogTitle className="">{capitalize(dialogTitle)}</DialogTitle>
           <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
+
+        {isEdit && course && (
+          <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg border bg-muted/30 my-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase text-muted-foreground">Status:</span>
+              <Badge
+                variant={
+                  course.status === "published"
+                    ? "default"
+                    : course.status === "archived"
+                    ? "destructive"
+                    : "secondary"
+                }
+                className="capitalize"
+              >
+                {course.status || "draft"}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Publish / Unpublish Button */}
+              {course.status === "published" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={updateStatusMutation.isPending || isPending}
+                  onClick={() => updateStatusMutation.mutate("draft")}
+                >
+                  {updateStatusMutation.isPending && updateStatusMutation.variables === "draft" ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  ) : (
+                    <EyeOff className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Unpublish
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={updateStatusMutation.isPending || isPending}
+                  onClick={() => updateStatusMutation.mutate("published")}
+                >
+                  {updateStatusMutation.isPending && updateStatusMutation.variables === "published" ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  ) : (
+                    <Globe className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Publish
+                </Button>
+              )}
+
+              {/* Archive / Unarchive Button */}
+              {course.status === "archived" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={updateStatusMutation.isPending || isPending}
+                  onClick={() => updateStatusMutation.mutate("draft")}
+                >
+                  {updateStatusMutation.isPending && updateStatusMutation.variables === "draft" ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  ) : (
+                    <ArchiveRestore className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Unarchive
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  disabled={updateStatusMutation.isPending || isPending}
+                  onClick={() => updateStatusMutation.mutate("archived")}
+                >
+                  {updateStatusMutation.isPending && updateStatusMutation.variables === "archived" ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  ) : (
+                    <Archive className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Archive
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full min-w-0">
           {/* Title */}

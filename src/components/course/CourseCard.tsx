@@ -23,6 +23,7 @@ import {
 import { CourseDialog, type Course } from "@/components/course/AddCourseDialog";
 import { deleteCourse } from "@/services/course.service";
 import { Pencil, Trash2, Loader2, BookOpen } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface CourseCardProps {
   course: Course;
@@ -56,6 +57,22 @@ export function CourseCard({
     <>
       <Card className="group hover:ring-foreground/20 transition-all duration-200 p-0">
         <div className="relative aspect-video bg-linear-to-br from-primary/20 via-primary/10 to-muted flex items-center justify-center overflow-hidden">
+          {course.status && (
+            <div className="absolute top-2 left-2 z-10">
+              <Badge
+                variant={
+                  course.status === "published"
+                    ? "default"
+                    : course.status === "archived"
+                    ? "destructive"
+                    : "secondary"
+                }
+                className="capitalize shadow-xs"
+              >
+                {course.status}
+              </Badge>
+            </div>
+          )}
           {course.coverArt ? (
             <img
               src={course.coverArt}
