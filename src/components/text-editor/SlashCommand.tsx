@@ -8,12 +8,14 @@ import {
   List,
   ListOrdered,
   ListChecks,
+  ImagePlus,
 } from "lucide-react";
 import { Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion from "@tiptap/suggestion";
 import { cn } from "@/lib/utils";
 import tippy from "tippy.js";
+import { pickAndInsertImages } from "./imageUpload";
 
 // Command Menu Items
 const COMMAND_ITEMS = [
@@ -79,6 +81,15 @@ const COMMAND_ITEMS = [
     icon: <Quote size={16} />,
     command: ({ editor, range }: any) => {
       editor.chain().focus().deleteRange(range).toggleBlockquote().run();
+    },
+  },
+  {
+    title: "Image",
+    description: "Upload an image",
+    icon: <ImagePlus size={16} />,
+    command: ({ editor, range }: any) => {
+      editor.chain().focus().deleteRange(range).run();
+      pickAndInsertImages(editor);
     },
   },
 ];

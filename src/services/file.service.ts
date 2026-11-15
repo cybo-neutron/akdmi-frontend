@@ -65,3 +65,34 @@ export async function uploadFileWithPreSignedUrl(
 
   return response;
 }
+
+export async function getEditorImageUploadUrl({
+  contentType,
+  size,
+}: {
+  contentType: string;
+  size: number;
+}): Promise<{ signedUrl: string; publicUrl: string }> {
+  const { data } = await axiosInterceptor.request({
+    method: "POST",
+    url: `/v1/file-upload/editor-image`,
+    data: {
+      contentType,
+      size,
+    },
+  });
+  return data;
+}
+
+// Uploads an image used inside the rich text editor and returns its public url
+export async function uploadEditorImage(file: File): Promise<string> {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image files can be uploaded");
+  }
+  const { signedUrl, publicUrl } = await getEditorImageUploadUrl({
+    contentType: file.type,
+    size: file.size,
+  });
+  await uploadFileWithPreSignedUrl(signedUrl, file);
+  return publicUrl;
+}

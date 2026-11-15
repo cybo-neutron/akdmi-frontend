@@ -19,6 +19,7 @@ import {
   Redo,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { pickAndInsertImages } from "./imageUpload";
 
 const setAlignment = (editor: any, alignment: string) => {
   // Check if we're in an image node
@@ -48,24 +49,6 @@ const isAlignmentActive = (editor: any, alignment: string) => {
     return node.attrs.textAlign === alignment;
   }
   return editor.isActive({ textAlign: alignment });
-};
-
-const insertImage = (editor: any) => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.onchange = () => {
-    const file = input.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      editor.chain().focus().setImage({ src: dataUrl }).run();
-    };
-    reader.readAsDataURL(file);
-  };
-  input.click();
 };
 
 const toolbarOptions = (editor: any) => [
@@ -154,7 +137,7 @@ const toolbarOptions = (editor: any) => [
   {
     title: "Insert Image",
     icon: <ImagePlus size={16} strokeWidth={2} />,
-    command: () => insertImage(editor),
+    command: () => pickAndInsertImages(editor),
     isActive: () => false,
   },
   { type: "separator" },

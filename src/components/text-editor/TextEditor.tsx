@@ -13,7 +13,9 @@ import { TaskItemView } from "./TaskItemView";
 import { ImageNodeView } from "./ImageNodeView";
 import { marked } from "marked";
 import TurndownService from "turndown";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
+import type { Editor } from "@tiptap/react";
+import { getImageFiles, uploadAndInsertImages } from "./imageUpload";
 
 interface TextEditorProps {
   content: string;
@@ -100,6 +102,9 @@ export default function TextEditor({ content, onChange }: TextEditorProps) {
   //   }
   // }, [initialContent]);
 
+  // Paste / drop handlers are created once, so they read the editor through a ref
+  const editorRef = useRef<Editor | null>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -150,7 +155,7 @@ export default function TextEditor({ content, onChange }: TextEditorProps) {
         },
       }).configure({
         inline: false,
-        allowBase64: true,
+        allowBase64: false,
       }),
       Link.configure({
         openOnClick: false,
@@ -187,6 +192,27 @@ export default function TextEditor({ content, onChange }: TextEditorProps) {
         // class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none max-w-none p-8'
         class: "prose prose-invert max-w-none ",
       },
+      // Pasted / dropped image files are uploaded to S3 and inserted by url
+      handlePaste: (_view, event) => {
+        const files = getImageFiles(event.clipboardData?.files);
+        if (!files.length || !editorRef.current) return false;
+        event.preventDefault();
+        uploadAndInsertImages(editorRef.current, files);
+        return true;
+      },
+      handleDrop: (view, event, _slice, moved) => {
+        // `moved` means an existing node is being dragged inside the editor
+        if (moved) return false;
+        const files = getImageFiles(event.dataTransfer?.files);
+        if (!files.length || !editorRef.current) return false;
+        event.preventDefault();
+        const pos = view.posAtCoords({
+          left: event.clientX,
+          top: event.clientY,
+        })?.pos;
+        uploadAndInsertImages(editorRef.current, files, pos);
+        return true;
+      },
     },
   });
 
@@ -220,16 +246,11 @@ export default function TextEditor({ content, onChange }: TextEditorProps) {
   //   };
   // }, [editor, debouncedSave]);
 
+  editorRef.current = editor;
+
   if (!editor) {
     return null;
   }
-
-  const addImage = () => {
-    const url = window.prompt("Enter image URL:");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  };
 
   return (
     <div className="flex flex-col p-1 border rounded-md max-h-[calc(90vh-12rem)]">
